@@ -8,7 +8,7 @@ namespace algorithm.Controllers
     [ApiController]
     public class CarChargingStatusController : ControllerBase
     {
-         private CarService CarService {  get; }
+         private CarService CarService { get; set; }
 
         public CarChargingStatusController(CarService carService)
         {
@@ -18,8 +18,8 @@ namespace algorithm.Controllers
         [HttpGet]
         public List<double> GetCarChargingStatus([FromQuery] CarsDTO CarsDTO)
         {
-            var test = CarService.CalculateCarsReadyTime(CarsDTO.SortedEnergyRequired, CarsDTO.ConnectedLoad, CarsDTO.NumberOfCars, CarsDTO.HoursToFullCharge, CarsDTO.ExpectedReadyTimes, CarsDTO.MaxChargeCapacity);
-            return new List<double> {  };
+            var test = CarService.CalculateCarsReadyTime(CarsDTO.SortedEnergyRequired, CarsDTO.ConnectedLoad, CarsDTO.NumberOfCars, CarsDTO.MaxChargeCapacity);
+            return test;
         }
     }
 }

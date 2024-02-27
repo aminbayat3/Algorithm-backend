@@ -4,18 +4,21 @@ namespace algorithm.Services
 {
     public class CarService 
     {
-        public dynamic  CalculateCarsReadyTime(List<double> sortedEnergyRequired, double connectedLoad, int numberOfCars, double hoursToFullCharge, List<double> expectedReadyTimes, double maxChargeCapacity, int counter = 0)
+        public List<double> CalculateCarsReadyTime(List<double> sortedEnergyRequired, double connectedLoad, int numberOfCars, double maxChargeCapacity)
         {
-            if (counter == (sortedEnergyRequired.Count - 1))
-            {
-                return 0;
-            }
-            double currentHours = (sortedEnergyRequired[counter + 1] - sortedEnergyRequired[counter]) / Math.Min((connectedLoad / numberOfCars), maxChargeCapacity);
-            hoursToFullCharge += currentHours;
-            expectedReadyTimes.Add(hoursToFullCharge);
-            hoursToFullCharge = (sortedEnergyRequired[counter + 1] - sortedEnergyRequired[counter]) / Math.Min((connectedLoad / numberOfCars), maxChargeCapacity) + CalculateCarsReadyTime(sortedEnergyRequired, connectedLoad, numberOfCars - 1, hoursToFullCharge, expectedReadyTimes, maxChargeCapacity, counter + 1);
+            double total = 0;
+            var readyTimes = new List<double>();
 
-            return expectedReadyTimes;
+            for(int i = 0; i < sortedEnergyRequired.Count - 1; i++)
+            {
+                total += (sortedEnergyRequired[i + 1] - sortedEnergyRequired[i]) / Math.Min((double)connectedLoad / numberOfCars, maxChargeCapacity);
+                readyTimes.Add(total);
+                
+                // here we could instead use a counter, so we dont have to reduce number of cars
+                numberOfCars--;
+            }
+
+            return readyTimes;
         }
     }
 }
