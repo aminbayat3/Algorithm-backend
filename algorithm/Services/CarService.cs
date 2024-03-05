@@ -11,7 +11,7 @@ namespace algorithm.Services
             int j = 0;
             int k = numberOfCars;
             double total = 0;
-            var readyTimeArray = new List<string>();
+            var readyTimeList = new List<string>();
 
             foreach (Interval interval in intervals)
             {
@@ -20,9 +20,10 @@ namespace algorithm.Services
                     break;
                 }
 
+                // When the array contains two or more elements with the same energy value , i check if the total is already greater.
                 if (total >= sortedEnergyRequired[j])
                 {
-                    readyTimeArray.Add(interval.End.ToString("yyyy.MM.dd HH:mm"));
+                    AddToReadyTimeList(readyTimeList, interval);
                     k--;
                     j++;
                     continue;
@@ -33,13 +34,18 @@ namespace algorithm.Services
 
                 if (interval.Energy >= sortedEnergyRequired[j])
                 {
-                    readyTimeArray.Add(interval.End.ToString("yyyy.MM.dd HH:mm"));
+                    AddToReadyTimeList(readyTimeList, interval);
                     k--;
                     j++;
                 }
             }
 
-            return readyTimeArray;
+            return readyTimeList;
+        }
+
+        private void AddToReadyTimeList (List<string> readyTimeList, Interval interval)
+        {
+            readyTimeList.Add(interval.End.ToString("yyyy.MM.dd HH:mm"));
         }
     }
 }
