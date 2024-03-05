@@ -16,10 +16,11 @@ namespace algorithm.Controllers
         }
 
         [HttpGet]
-        public List<double> GetCarChargingStatus([FromQuery] CarsDTO CarsDTO)
+        public List<string> GetCarChargingStatus([FromQuery] CarsDTO CarsDTO)
         {
-            var test = CarService.CalculateCarsReadyTime(CarsDTO.SortedEnergyRequired, CarsDTO.ConnectedLoad, CarsDTO.NumberOfCars, CarsDTO.MaxChargeCapacity);
+            var test = CarService.CalculateCarsReadyTimeUsingSimulation(CarsDTO.SortedEnergyRequired, CarsDTO.ConnectedLoad, CarsDTO.NumberOfCars, CarsDTO.PlugInTime, CarsDTO.intervalDurationInMinutes, CarsDTO.MaxChargeCapacity);
             return test;
         }
     }
 }
+

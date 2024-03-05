@@ -1,24 +1,45 @@
-﻿using System;
+﻿using algorithm.Utils;
+using System;
 
 namespace algorithm.Services
 {
     public class CarService 
     {
-        public List<double> CalculateCarsReadyTime(List<double> sortedEnergyRequired, double connectedLoad, int numberOfCars, double maxChargeCapacity)
+        public List<string> CalculateCarsReadyTimeUsingSimulation(List<double> sortedEnergyRequired, double connectedLoad, int numberOfCars, DateTime plugInTime, int intervalDurationInMinutes, double maxChargeCapacity)
         {
+            List<Interval> intervals = TimeIntervalGenerator.GenerateWeeklyTimestamps(plugInTime, intervalDurationInMinutes);
+            int j = 0;
+            int k = numberOfCars;
             double total = 0;
-            var readyTimes = new List<double>();
+            var readyTimeArray = new List<string>();
 
-            for(int i = 0; i < sortedEnergyRequired.Count - 1; i++)
+            foreach (Interval interval in intervals)
             {
-                total += (sortedEnergyRequired[i + 1] - sortedEnergyRequired[i]) / Math.Min((double)connectedLoad / numberOfCars, maxChargeCapacity);
-                readyTimes.Add(total);
-                
-                // here we could instead use a counter, so we dont have to reduce number of cars
-                numberOfCars--;
+                if (j == numberOfCars)
+                {
+                    break;
+                }
+
+                if (total >= sortedEnergyRequired[j])
+                {
+                    readyTimeArray.Add(interval.End.ToString("yyyy.MM.dd HH:mm"));
+                    k--;
+                    j++;
+                    continue;
+                }
+
+                total += (double)intervalDurationInMinutes / 60 * Math.Min(connectedLoad / k, maxChargeCapacity);
+                interval.Energy = total;
+
+                if (interval.Energy >= sortedEnergyRequired[j])
+                {
+                    readyTimeArray.Add(interval.End.ToString("yyyy.MM.dd HH:mm"));
+                    k--;
+                    j++;
+                }
             }
 
-            return readyTimes;
+            return readyTimeArray;
         }
     }
 }
