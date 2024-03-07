@@ -1,4 +1,4 @@
-﻿using algorithm.Models;
+﻿using algorithm.Models.DTO;
 using algorithm.Services;
 using Microsoft.AspNetCore.Mvc;
 
@@ -8,7 +8,7 @@ namespace algorithm.Controllers
     [ApiController]
     public class CarChargingStatusController : ControllerBase
     {
-         private CarService CarService { get; set; }
+         private CarService CarService { get; set; } 
 
         public CarChargingStatusController(CarService carService)
         {
@@ -16,9 +16,9 @@ namespace algorithm.Controllers
         }
 
         [HttpGet]
-        public List<string> GetCarChargingStatus([FromQuery] CarsDTO CarsDTO)
+        public List<string> GetCarChargingStatus([FromQuery] CarFormDTO form)
         {
-            var test = CarService.CalculateCarsReadyTimeUsingSimulation(CarsDTO.SortedEnergyRequired, CarsDTO.ConnectedLoad, CarsDTO.NumberOfCars, CarsDTO.PlugInTime, CarsDTO.intervalDurationInMinutes, CarsDTO.MaxChargeCapacity);
+            var test = CarService.CalculateCarsReadyTimeUsingSimulation(form.SortedEnergyRequired, CarsDTO.ConnectedLoad, CarsDTO.NumberOfCars, CarsDTO.PlugInTime, CarsDTO.IntervalDurationInMinutes, CarsDTO.MaxChargeCapacity);
             return test;
         }
     }
