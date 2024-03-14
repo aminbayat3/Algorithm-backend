@@ -7,7 +7,7 @@ namespace algorithm.Services
     {
         public List<string> CalculateCarsReadyTimeUsingSimulation(List<double> sortedEnergyRequired, double connectedLoad, int numberOfCars, DateTime plugInTime, int intervalDurationInMinutes, double maxChargeCapacity)
         {
-            List<Interval> intervals = TimeIntervalGenerator.GenerateWeeklyTimestamps(plugInTime, intervalDurationInMinutes);
+            List<Interval> intervals = LegGenerator.GenerateWeeklyTimestamps(plugInTime, intervalDurationInMinutes);
             int j = 0;
             int k = numberOfCars;
             double total = 0;
