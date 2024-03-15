@@ -16,9 +16,9 @@ namespace algorithm.Controllers
         }
 
         [HttpGet]
-        public List<string> GetCarChargingStatus([FromQuery] CarFormDTO form)
+        public List<string> GetCarChargingStatus([FromQuery] CarChargingSessionDTO form)
         {
-            var test = CarService.CalculateCarsReadyTimeUsingSimulation(form.SortedEnergyRequired, CarsDTO.ConnectedLoad, CarsDTO.NumberOfCars, CarsDTO.PlugInTime, CarsDTO.IntervalDurationInMinutes, CarsDTO.MaxChargeCapacity);
+            var test = CarService.calculateCarsDataSimulation(form);
             return test;
         }
     }

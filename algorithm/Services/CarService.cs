@@ -1,17 +1,37 @@
-﻿using algorithm.Utils;
+﻿using algorithm.Models;
+using algorithm.Models.DTO;
+using algorithm.Utils;
 using System;
 
 namespace algorithm.Services
 {
     public class CarService 
     {
-        public List<string> CalculateCarsReadyTimeUsingSimulation(List<double> sortedEnergyRequired, double connectedLoad, int numberOfCars, DateTime plugInTime, int intervalDurationInMinutes, double maxChargeCapacity)
+        public List<string> calculateCarsDataSimulation(CarChargingSessionDTO form)
         {
-            List<Interval> intervals = LegGenerator.GenerateWeeklyTimestamps(plugInTime, intervalDurationInMinutes);
-            int j = 0;
-            int k = numberOfCars;
-            double total = 0;
-            var readyTimeList = new List<string>();
+            List<Leg> legs = LegGenerator.GenerateTwoDayTimestamps(form.StartTime, form.EndTime, form.IntervalDuration);
+
+            int plugInCounter = 0;
+            int plugOutCounter = 0;
+            int fulfilledCounter = 0;
+
+            int counter = 0;
+
+            for(int i = 0; i < legs.Count; i++)
+            {
+                if (legs[i].EndTime >= form.PlugInEvents[plugInCounter].Time)
+                {
+                    form.ConnectedCars.Add(form.PlugInEvents[plugInCounter].Car);
+                    plugInCounter++;
+                    break;
+                }
+
+                if (legs[i].EndTime >= form.PlugOutEvents[plugOutCounter].Time)
+                {
+                    form.ConnectedCars = form.ConnectedCars.Where(car => car.Name != form.PlugOutEvents[plugOutCounter].Car.Name).ToList();
+
+                }
+            }
 
             foreach (Interval interval in intervals)
             {

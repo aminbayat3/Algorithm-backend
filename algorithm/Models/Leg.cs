@@ -7,11 +7,11 @@ namespace algorithm.Models
         public int Number { get; set; }
         public DateTime StartTime { get; set; }
         public DateTime EndTime { get; set; }
-        public double CalculatedChargeLoad { get; set; }
-        public PlugInEvent PlugIn {  get; set; }
-        public PlugOutEvent PlugOut { get; set; } 
-        public FulfilledEvent Fulfill { get; set; }
-        public FullEvent Full { get; set; } 
+        public List<Car> PluggedInCars { get; set; }
+        public PlugInEvent PlugInEvent {  get; set; }
+        public PlugOutEvent PlugOutEvent { get; set; } 
+        public FulfilledEvent FulfillEvent { get; set; } // Need met
+        public FullEvent FullEvent { get; set; } 
 
         public Leg(int number, DateTime startTime, DateTime endtime)
         {
