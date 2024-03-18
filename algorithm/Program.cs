@@ -10,7 +10,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 
-builder.Services.AddScoped<CarService>();
+builder.Services.AddScoped<ChargeManagementService>();
 
 // Add CORS services
 builder.Services.AddCors(options =>

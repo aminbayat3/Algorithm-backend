@@ -8,17 +8,17 @@ namespace algorithm.Controllers
     [ApiController]
     public class CarChargingStatusController : ControllerBase
     {
-         private CarService CarService { get; set; } 
+         private ChargeManagementService ChargeManagementService { get; set; } 
 
-        public CarChargingStatusController(CarService carService)
+        public CarChargingStatusController(ChargeManagementService chargeManagementService)
         {
-            CarService = carService;
+            ChargeManagementService = chargeManagementService;
         }
 
         [HttpGet]
         public List<string> GetCarChargingStatus([FromQuery] CarChargingSessionDTO form)
         {
-            var test = CarService.calculateCarsDataSimulation(form);
+            var test = ChargeManagementService.calculateCarsDataSimulation(form);
             return test;
         }
     }

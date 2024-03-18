@@ -1,15 +1,18 @@
-﻿using algorithm.Models;
+﻿using algorithm.Data;
+using algorithm.Models;
+using algorithm.Models.Base;
 using algorithm.Models.DTO;
 using algorithm.Utils;
 using System;
 
 namespace algorithm.Services
 {
-    public class CarService 
+    public class ChargeManagementService 
     {
         public List<string> calculateCarsDataSimulation(CarChargingSessionDTO form)
         {
-            List<Leg> legs = LegGenerator.GenerateTwoDayTimestamps(form.StartTime, form.EndTime, form.IntervalDuration);
+            List<SocLeg> socLegs = LegGenerator.GenerateSocLegs(form.StartTime, form.EndTime, form.LegDuration, CarDb.Cars);
+            List<WallBoxLeg> wallboxLegs = LegGenerator.GenerateWallBoxLegs(form.StartTime, form.EndTime, form.LegDuration, WallBoxDb.WallBoxes);
 
             int plugInCounter = 0;
             int plugOutCounter = 0;
@@ -17,18 +20,20 @@ namespace algorithm.Services
 
             int counter = 0;
 
-            for(int i = 0; i < legs.Count; i++)
+            for(int i = 0; i < socLegs.Count; i++)
             {
-                if (legs[i].EndTime >= form.PlugInEvents[plugInCounter].Time)
+                if (wallboxLegs[i].EndTime >= form.PlugInEvents[plugInCounter].Time)
                 {
-                    form.ConnectedCars.Add(form.PlugInEvents[plugInCounter].Car);
+                    wallboxLegs[i].IsConnected = true;
+                    wallboxLegs[i].
+                    form.ConnectedCarIds.Add(form.PlugInEvents[plugInCounter].CarId);
                     plugInCounter++;
                     break;
                 }
 
-                if (legs[i].EndTime >= form.PlugOutEvents[plugOutCounter].Time)
+                if (wallboxLegs[i].EndTime >= form.PlugOutEvents[plugOutCounter].Time)
                 {
-                    form.ConnectedCars = form.ConnectedCars.Where(car => car.Name != form.PlugOutEvents[plugOutCounter].Car.Name).ToList();
+                    form.ConnectedCarIds = form.ConnectedCarIds.Where(carId => carId != form.PlugOutEvents[plugOutCounter].CarId).ToList();
 
                 }
             }
@@ -63,9 +68,9 @@ namespace algorithm.Services
             return readyTimeList;
         }
 
-        private void AddToReadyTimeList (List<string> readyTimeList, Interval interval)
+        private void AddToReadyTimeList (List<string> readyTimeList, Leg leg)
         {
-            readyTimeList.Add(interval.End.ToString("yyyy.MM.dd HH:mm"));
+            readyTimeList.Add(leg.EndTime.ToString("yyyy.MM.dd HH:mm"));
         }
     }
 }
