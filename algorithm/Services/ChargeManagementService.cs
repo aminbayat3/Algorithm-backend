@@ -20,12 +20,13 @@ namespace algorithm.Services
 
             int counter = 0;
 
-            for(int i = 0; i < socLegs.Count; i++)
+            for(int i = 0; i < wallboxLegs.Count; i++)
             {
                 if (wallboxLegs[i].EndTime >= form.PlugInEvents[plugInCounter].Time)
                 {
                     wallboxLegs[i].IsConnected = true;
-                    wallboxLegs[i].
+                    wallboxLegs[i].WallBoxId = form.PlugInEvents[plugInCounter].WallBoxId;
+                    wallboxLegs[i].CarId = form.PlugInEvents[plugInCounter].CarId;
                     form.ConnectedCarIds.Add(form.PlugInEvents[plugInCounter].CarId);
                     plugInCounter++;
                     break;
