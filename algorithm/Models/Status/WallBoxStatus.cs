@@ -9,7 +9,7 @@
 
         public WallBoxStatus()
         {
-            CurrentChargeLoad = 20;
+            CurrentChargeLoad = 0;
             IsConnected = false;
             WallBoxId = null;
             CarId = null;

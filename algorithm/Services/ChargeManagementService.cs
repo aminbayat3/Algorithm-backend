@@ -9,34 +9,32 @@ namespace algorithm.Services
 {
     public class ChargeManagementService 
     {
-        public List<string> calculateCarsDataSimulation(CarChargingSessionDTO form, Statuses statuses, int plugInCounter = 0, int plugOutCounter = 0, int needCounter = 0)
+        public List<string> calculateCarsDataSimulation(CarChargingSessionDTO form, Statuses statuses, List<Event> pluginEvents, List<Event> plugoutEvents, List<CarEnergyRequirement> neededEnergies, int legNumber, int plugInCounter = 0, int plugOutCounter = 0, int needCounter = 0)
         {
-            List<Event> pluginEvents = ReservationDb.getSortedPluginEvents(form.Reservations); // later we should have a Repo Class and inject Db class into it and move these methods into the Repo class not in the Db class
-            List<Event> plugoutEvents = ReservationDb.getSortedPlugoutEvents(form.Reservations);
-            List<CarEnergyRequirement> neededEnergies = ReservationDb.getSortedNeededEnergy(form.Reservations);
+                var needMetCar = statuses.SocLegs[legNumber].SocStatuses.FirstOrDefault(status => status.Soc >= neededEnergies[needCounter].NeededEnergy)?.CarId;
 
-            for(int i = 0; i < statuses.SocLegs.Count; i++)
-            {
-               if(i > 0) statuses.SocLegs[i] = statuses.SocLegs[i - 1];
+               if (legNumber > 0) statuses.SocLegs[legNumber].SocStatuses = statuses.SocLegs[legNumber - 1].SocStatuses;
 
-                if (statuses.SocLegs[i].EndTime >= pluginEvents[plugInCounter].Time)
+                if (statuses.SocLegs[legNumber].EndTime >= pluginEvents[plugInCounter].Time)
                 {
                     form.ConnectedCarIds.Add(pluginEvents[plugInCounter].CarId);
+                    var statusOnWallBoxes = new StatusOnWallBoxes(legNumber, statuses.SocLegs[legNumber].StartTime, statuses.SocLegs[legNumber].EndTime);
+                    statusOnWallBoxes.WallBoxStatuses
                     plugInCounter++;
-                    break;
+                    return 
                 }
 
-                if (statuses.SocLegs[i].EndTime >= plugoutEvents[plugOutCounter].Time)
+                if (statuses.SocLegs[legNumber].EndTime >= plugoutEvents[plugOutCounter].Time)
                 {
                     form.ConnectedCarIds = form.ConnectedCarIds.Where(carId => carId != plugoutEvents[plugOutCounter].CarId).ToList();
                     plugOutCounter++;
-                    break;
+                    return 
+                }
+                
+                if (needMetCar != null)
+                {
 
                 }
-
-                if(statuses.SocLegs[i].Soc )
-            }
-
        
         }
 

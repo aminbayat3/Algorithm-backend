@@ -7,10 +7,10 @@ namespace algorithm.Models.Status
         public string CarId { get; set; }
         public double Soc { get; set; }
 
-        public SocStatus(double soc = 0, string carId = null)
+        public SocStatus()
         {
-            Soc = soc;
-            CarId = carId;
+            Soc = 0;
+            CarId = null;
         }
     }
 }
