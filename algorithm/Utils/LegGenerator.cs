@@ -6,9 +6,11 @@ namespace algorithm.Utils
     public class LegGenerator 
     {
         // these two methods have similar implementation , so we can write them in one function later instead of two
-        public static List<SocLeg> GenerateSocLegs(DateTime startTime, DateTime endTime, int legDuration, List<Car> cars)
+        public static Statuses GenerateLegs(DateTime startTime, DateTime endTime, int legDuration)
         {
-            var socLegs = new List<SocLeg>();
+            var socLegs = new List<StatusOfSocInCars>();
+            var wallboxLegs = new List<StatusOnWallBoxes>();
+            var connectionLoadLegs = new List<AvailableConnectionLoad>();
 
             int counter = 1;
 
@@ -16,31 +18,14 @@ namespace algorithm.Utils
             {
                 DateTime start = startTime;
                 DateTime end = startTime.AddMinutes(legDuration);
-                socLegs.Add(new SocLeg(counter, start, end, cars));
+                socLegs.Add(new StatusOfSocInCars(counter, start, end));
+                wallboxLegs.Add(new StatusOnWallBoxes(counter, start, end));
+                connectionLoadLegs.Add(new AvailableConnectionLoad(counter, start, end));
                 startTime = end;
                 counter++;
             }
 
-            return socLegs;
-        }
-
-        public static List<WallBoxLeg> GenerateWallBoxLegs(DateTime startTime, DateTime endTime, int legDuration, List<WallBox> wallboxes)
-        {
-            var wallboxLegs = new List<WallBoxLeg>();
-
-            int counter = 1;
-
-            while (startTime < endTime)
-            {
-                DateTime start = startTime;
-                DateTime end = startTime.AddMinutes(legDuration);
-                wallboxLegs.Add(new WallBoxLeg(counter, start, end, wallboxes));
-                startTime = end;
-                counter++;
-            }
-
-            return wallboxLegs;
-
+            return new Statuses(socLegs, wallboxLegs, connectionLoadLegs);
         }
     }
 }

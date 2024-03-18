@@ -1,5 +1,8 @@
-﻿using algorithm.Models.DTO;
+﻿using algorithm.Data;
+using algorithm.Models;
+using algorithm.Models.DTO;
 using algorithm.Services;
+using algorithm.Utils;
 using Microsoft.AspNetCore.Mvc;
 
 namespace algorithm.Controllers
@@ -18,7 +21,10 @@ namespace algorithm.Controllers
         [HttpGet]
         public List<string> GetCarChargingStatus([FromQuery] CarChargingSessionDTO form)
         {
-            var test = ChargeManagementService.calculateCarsDataSimulation(form);
+            ReservationDb.AddReservations(form.Reservations);
+            Statuses statuses = LegGenerator.GenerateLegs(form.StartTime, form.EndTime, form.LegDuration);
+
+            var test = ChargeManagementService.calculateCarsDataSimulation(form, statuses);
             return test;
         }
     }
