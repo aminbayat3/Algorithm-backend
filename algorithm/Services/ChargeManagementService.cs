@@ -10,44 +10,21 @@ namespace algorithm.Services
 {
     public class ChargeManagementService 
     {
-        public List<string> calculateCarsDataSimulation(CarChargingSessionDTO form, Statuses statuses, int legNumber) // it should check if we have any plugin before this 
+        public List<string> legManager(Statuses statuses, int legNumber) // it should check if we have any plugin before this 
         {
-
-            var pluginEvent = ReadDataAndUpdateWallboxesStatuses(form, legNumber);
+            // first update the wallbox status
+            ReadDataAndUpdateWallboxesStatuses(statuses, legNumber);
 
            
 
-            var needMetCar = statuses.SocLegs[legNumber].SocStatuses.FirstOrDefault(status => status.Soc >= neededEnergies[needCounter].NeededEnergy)?.CarId;
-
-               if (legNumber > 0) statuses.SocLegs[legNumber].SocStatuses = statuses.SocLegs[legNumber - 1].SocStatuses;
-
-                if (statuses.SocLegs[legNumber].EndTime >= pluginEvents[plugInCounter].Time)
-                {
-                    form.ConnectedCarIds.Add(pluginEvents[plugInCounter].CarId);
-                    var statusOnWallBoxes = new StatusOnWallBoxes(legNumber, statuses.SocLegs[legNumber].StartTime, statuses.SocLegs[legNumber].EndTime);
-                    statusOnWallBoxes.WallBoxStatuses
-                    plugInCounter++;
-                    return 
-                }
-
-                if (statuses.SocLegs[legNumber].EndTime >= plugoutEvents[plugOutCounter].Time)
-                {
-                    form.ConnectedCarIds = form.ConnectedCarIds.Where(carId => carId != plugoutEvents[plugOutCounter].CarId).ToList();
-                    plugOutCounter++;
-                    return 
-                }
-                
-                if (needMetCar != null)
-                {
-
-                }
+            //var needMetCar = statuses.SocLegs[legNumber].SocStatuses.FirstOrDefault(status => status.Soc >= neededEnergies[needCounter].NeededEnergy)?.CarId;
        
         }
 
-        private Event ReadDataAndUpdateWallboxesStatuses(CarChargingSessionDTO form, Statuses statuses, int legNumber)
+        private void ReadDataAndUpdateWallboxesStatuses(Statuses statuses, int legNumber)
         {
             //Finding the Current Leg
-            Leg currentLeg = ConvertLegNumberToPackageTime(form, legNumber);
+            // Leg currentLeg = ConvertLegNumberToPackageTime(legNumber);
 
             //Reading Data
             List<Event> pluginEvents = ReservationDb.getSortedPluginEvents(ReservationDb.Reservations);
@@ -55,29 +32,29 @@ namespace algorithm.Services
             List<CarEnergyRequirement> neededEnergies = ReservationDb.getSortedNeededEnergy(ReservationDb.Reservations);
 
             //Updating The Status of WB of the Current Leg (later we can seperate these parts into their own method)
-            Event pluginEvent = pluginEvents.FirstOrDefault(e => !e.IsPlugIn && currentLeg.EndTime >= e.Time);
+            Event pluginEvent = pluginEvents.FirstOrDefault(e => currentLeg.EndTime >= e.Time); // the plugin Time should be between the start and the end
 
             if(pluginEvent != null)
             {
-                pluginEvent.IsPlugIn = true;
-                form.ConnectedCarIds.Add(pluginEvent.CarId);
-                connectedCar = CarDb.Cars.FirstOrDefault(car => car.Id == pluginEvent.CarId)
+                Car connectedCar = CarDb.Cars.FirstOrDefault(car => car.Id == pluginEvent.CarId);
+               // form.ConnectedCars.Add(connectedCar);
 
                 foreach(WallBoxStatus status in statuses.WallBoxLegs[legNumber].WallBoxStatuses) 
                 {
+                    
                     if(status.CarId == pluginEvent.CarId)
                     {
                         status.IsConnected = true;
-                        status.CurrentChargeLoad = (form.ConnectionLoad / form.ConnectedCarIds.Count;
+                        status.CurrentChargeLoad = Math.Min((form.ConnectionLoad / form.ConnectedCars.Count), connectedCar.MaxAcConnectionLoad);
                     }
                 }
                 // how can i update 
             }
         }
-        private Leg ConvertLegNumberToPackageTime(CarChargingSessionDTO form, int legNumber)
+        private Leg ConvertLegNumberToPackageTime(int legNumber)
         {
-            DateTime startTime = form.StartTime.AddMinutes(form.LegDuration * (legNumber - 1));
-            DateTime endTime = startTime.AddMinutes(form.LegDuration);
+            DateTime startTime = StartTime.AddMinutes(LegDuration * (legNumber - 1));
+            DateTime endTime = startTime.AddMinutes(LegDuration);
 
             return new Leg(legNumber, startTime, endTime);
         }

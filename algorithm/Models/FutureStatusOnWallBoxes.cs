@@ -1,13 +1,28 @@
-﻿using algorithm.Models.Status;
+﻿using algorithm.Data;
+using algorithm.Models.Base;
+using algorithm.Models.DTO;
+using algorithm.Models.Status;
+using Microsoft.AspNetCore.Http;
 
 namespace algorithm.Models
 {
-    public class FutureStatusOnWallBoxes
+    public class FutureStatusOnWallBoxes: Leg
     {
-       public List<FutureWallBoxStatus> FutureWallBoxStatuses { get; set; }
+       public List<FutureWallBoxStatus> FutureWallBoxStatuses { get; set; } // change the nam to SimulatePluginAndPlugOut
 
-        public FutureStatusOnWallBoxes() {
+        public FutureStatusOnWallBoxes(int number, DateTime startTime, DateTime endtime) : base(number, startTime, endtime)
+        {
             FutureWallBoxStatuses = new List<FutureWallBoxStatus>();    
+        }
+
+        public override string ToString()
+        {
+            string result = "FutureWallBoxStatuses: \n";
+            foreach (FutureWallBoxStatus status in FutureWallBoxStatuses)
+            {
+                result += status.ToString() + "\n";
+            }
+            return result;
         }
     }
 }
