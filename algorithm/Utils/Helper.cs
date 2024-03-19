@@ -2,9 +2,9 @@
 
 namespace algorithm.Utils
 {
-    public class Helper
+    public static class Helper
     {
-         public int ConvertTimeToLegNumber(DateTime time)
+         public static int ConvertTimeToLegNumber(DateTime time)
         {
             TimeSpan duration = time - Globals.Form.StartTime;
 
@@ -14,6 +14,22 @@ namespace algorithm.Utils
             // Divide by 15 to find how many 15-minute intervals are contained in the duration
 
             return (int)Math.Floor(totalMinutes / Globals.Form.LegDuration);
+        }
+
+        public static int GetNumericPart(string input)
+        {
+            // Find the index where the first digit appears
+            int index = 0;
+            while (index < input.Length && !char.IsDigit(input[index]))
+            {
+                index++;
+            }
+
+            // Extract the numeric part of the string
+            string numericPart = input.Substring(index);
+
+            // Convert the numeric part to an integer using int.Parse
+            return int.Parse(numericPart);
         }
 
     }
