@@ -3,7 +3,7 @@ using algorithm.Models.Base;
 
 namespace algorithm.Models.Base
 {
-    public abstract class Leg : Entity
+    public class Leg : Entity
     {
         public int Number { get; set; }
         public DateTime StartTime { get; set; }

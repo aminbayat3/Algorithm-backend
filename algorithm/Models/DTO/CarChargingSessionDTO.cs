@@ -9,7 +9,7 @@ namespace algorithm.Models.DTO
         //public List<Event> PlugOutEvents { get; set; }
         //public List<> NeededEnergy { get; set; }
         //public List<Event> FulfilledEvents { get; set; } 
-        public List<string> ConnectedCarIds { get; set; }
+        public List<Car> ConnectedCars { get; set; }
         public DateTime StartTime { get; set; }
         public DateTime EndTime { get; set; }
         public int LegDuration { get; set; } = 15; // Minutes

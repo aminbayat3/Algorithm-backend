@@ -6,11 +6,8 @@ namespace algorithm.Models.DTO
     {
         public string Id { get; set; }
         public string Name { get; set; }
-        public double FullEnergy { get; set; }
-        public DateTime ExpectedReadyTime { get; set; }
         public double MaxAcConnectionLoad { get; set; }
         public double TankSize { get; set; }
-        public double Soc { get; set; } // current state of the charge(it shows how much energy a car has at the moment)
 
         public CarViewDTO(Car car) { 
             Id = car.Id;
