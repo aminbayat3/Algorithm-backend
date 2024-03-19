@@ -37,18 +37,35 @@ namespace algorithm.Controllers
                 {
                     if(reservation.Expi >= leg.StartTime && reservation.Expi < leg.EndTime)
                     {
-                        foreach(FutureWallBoxStatus status in leg.FutureWallBoxStatuses)
+                        foreach(var status in leg.FutureWallBoxStatuses)
                         {
-                            if(status.CarId == reservation.CarId)
+                            if(status.WallBoxId == reservation.WallBoxId)
                             {
-                                s
+                                status.CarId = reservation.CarId;
+                                status.IsConnected = true;
+                                status.NeededEnergy = reservation.NeededEnergy;
+                            }
+                        }
+                    }
+
+                    if(reservation.Expo >= leg.StartTime && reservation.Expo < leg.EndTime)
+                    {
+                        foreach(var status in leg.FutureWallBoxStatuses)
+                        {
+                            if(status.WallBoxId == reservation.WallBoxId)
+                            {
+                                status.CarId = reservation.CarId
                             }
                         }
                     }
                 }
             }
-                
-            for()
+
+            foreach(var statusOnWB in statuses.SimulatePiAndPo)
+            {
+                Console.WriteLine(statusOnWB.ToString());
+            }
+            
             // Print where we can see if the injection was right or not
 
             for (int legNumber = 0; legNumber < statuses.SocLegs.Count; legNumber++)

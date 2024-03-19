@@ -12,7 +12,12 @@ namespace algorithm.Models
 
         public FutureStatusOnWallBoxes(int number, DateTime startTime, DateTime endtime) : base(number, startTime, endtime)
         {
-            FutureWallBoxStatuses = new List<FutureWallBoxStatus>();    
+            FutureWallBoxStatuses = new List<FutureWallBoxStatus>();
+
+            foreach (var wallbox in WallBoxDb.WallBoxes)
+            {
+                FutureWallBoxStatuses.Add(new FutureWallBoxStatus(wallbox.Id));
+            }
         }
 
         public override string ToString()

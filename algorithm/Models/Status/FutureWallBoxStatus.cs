@@ -10,11 +10,11 @@ namespace algorithm.Models.Status
         public bool IsConnected { get; set; }
         public double? NeededEnergy { get; set; }
 
-        public FutureWallBoxStatus()
+        public FutureWallBoxStatus(string wallboxId)
         {
             NeededEnergy = null;
             IsConnected = false;
-            WallBoxId = null;
+            WallBoxId = wallboxId;
             CarId = null;
         }
 
