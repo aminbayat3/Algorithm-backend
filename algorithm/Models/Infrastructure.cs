@@ -1,6 +1,4 @@
-﻿
-
-namespace algorithm.Models
+﻿namespace algorithm.Models
 {
     public class Infrastructure
     {

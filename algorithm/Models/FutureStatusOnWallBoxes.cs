@@ -1,14 +1,12 @@
 ﻿using algorithm.Data;
 using algorithm.Models.Base;
-using algorithm.Models.DTO;
 using algorithm.Models.Status;
-using Microsoft.AspNetCore.Http;
 
 namespace algorithm.Models
 {
-    public class FutureStatusOnWallBoxes: Leg
+    public class FutureStatusOnWallBoxes : Leg
     {
-       public List<FutureWallBoxStatus> FutureWallBoxStatuses { get; set; } // change the nam to SimulatePluginAndPlugOut
+        public List<FutureWallBoxStatus> FutureWallBoxStatuses { get; set; } // change the nam to SimulatePluginAndPlugOut
 
         public FutureStatusOnWallBoxes(int number, DateTime startTime, DateTime endtime) : base(number, startTime, endtime)
         {

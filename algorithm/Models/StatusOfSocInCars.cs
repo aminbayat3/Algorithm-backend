@@ -3,13 +3,12 @@ using algorithm.Models.Status;
 
 namespace algorithm.Models
 {
-    public class StatusOfSocInCars: Leg
+    public class StatusOfSocInCars : Leg
     {
         public List<SocStatus> SocStatuses { get; set; }
-        public StatusOfSocInCars(int number, DateTime startTime, DateTime endTime): base(number, startTime, endTime)
+        public StatusOfSocInCars(int number, DateTime startTime, DateTime endTime) : base(number, startTime, endTime)
         {
-          SocStatuses = new List<SocStatus>();
+            SocStatuses = new List<SocStatus>();
         }
     }
 }
- 

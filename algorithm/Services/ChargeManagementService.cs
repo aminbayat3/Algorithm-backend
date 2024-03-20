@@ -6,57 +6,57 @@ using algorithm.Models.Status;
 using algorithm.Utils;
 using System;
 
-namespace algorithm.Services
-{
-    public class ChargeManagementService 
-    {
-        public List<string> legManager(Statuses statuses, int legNumber) // it should check if we have any plugin before this 
-        {
-            // first update the wallbox status
-            ReadDataAndUpdateWallboxesStatuses(statuses, legNumber);
+//namespace algorithm.Services
+//{
+//    public class ChargeManagementService 
+//    {
+//        public List<string> legManager(Statuses statuses, int legNumber) // it should check if we have any plugin before this 
+//        {
+//            // first update the wallbox status
+//            ReadDataAndUpdateWallboxesStatuses(statuses, legNumber);
 
            
 
-            //var needMetCar = statuses.SocLegs[legNumber].SocStatuses.FirstOrDefault(status => status.Soc >= neededEnergies[needCounter].NeededEnergy)?.CarId;
+//            //var needMetCar = statuses.SocLegs[legNumber].SocStatuses.FirstOrDefault(status => status.Soc >= neededEnergies[needCounter].NeededEnergy)?.CarId;
        
-        }
+//        }
 
-        private void ReadDataAndUpdateWallboxesStatuses(Statuses statuses, int legNumber)
-        {
-            //Finding the Current Leg
-            // Leg currentLeg = ConvertLegNumberToPackageTime(legNumber);
+//        private void ReadDataAndUpdateWallboxesStatuses(Statuses statuses, int legNumber)
+//        {
+//            //Finding the Current Leg
+//            // Leg currentLeg = ConvertLegNumberToPackageTime(legNumber);
 
-            //Reading Data
-            List<Event> pluginEvents = ReservationDb.getSortedPluginEvents(ReservationDb.Reservations);
-            List<Event> plugoutEvents = ReservationDb.getSortedPlugoutEvents(ReservationDb.Reservations);
-            List<CarEnergyRequirement> neededEnergies = ReservationDb.getSortedNeededEnergy(ReservationDb.Reservations);
+//            //Reading Data
+//            List<Event> pluginEvents = ReservationDb.getSortedPluginEvents(ReservationDb.Reservations);
+//            List<Event> plugoutEvents = ReservationDb.getSortedPlugoutEvents(ReservationDb.Reservations);
+//            List<CarEnergyRequirement> neededEnergies = ReservationDb.getSortedNeededEnergy(ReservationDb.Reservations);
 
-            //Updating The Status of WB of the Current Leg (later we can seperate these parts into their own method)
-            Event pluginEvent = pluginEvents.FirstOrDefault(e => currentLeg.EndTime >= e.Time); // the plugin Time should be between the start and the end
+//            //Updating The Status of WB of the Current Leg (later we can seperate these parts into their own method)
+//            Event pluginEvent = pluginEvents.FirstOrDefault(e => currentLeg.EndTime >= e.Time); // the plugin Time should be between the start and the end
 
-            if(pluginEvent != null)
-            {
-                Car connectedCar = CarDb.Cars.FirstOrDefault(car => car.Id == pluginEvent.CarId);
-               // form.ConnectedCars.Add(connectedCar);
+//            if(pluginEvent != null)
+//            {
+//                Car connectedCar = CarDb.Cars.FirstOrDefault(car => car.Id == pluginEvent.CarId);
+//               // form.ConnectedCars.Add(connectedCar);
 
-                foreach(WallBoxStatus status in statuses.WallBoxLegs[legNumber].WallBoxStatuses) 
-                {
+//                foreach(WallBoxStatus status in statuses.WallBoxLegs[legNumber].WallBoxStatuses) 
+//                {
                     
-                    if(status.CarId == pluginEvent.CarId)
-                    {
-                        status.IsConnected = true;
-                        status.CurrentChargeLoad = Math.Min((form.ConnectionLoad / form.ConnectedCars.Count), connectedCar.MaxAcConnectionLoad);
-                    }
-                }
-                // how can i update 
-            }
-        }
-        private Leg ConvertLegNumberToPackageTime(int legNumber)
-        {
-            DateTime startTime = StartTime.AddMinutes(LegDuration * (legNumber - 1));
-            DateTime endTime = startTime.AddMinutes(LegDuration);
+//                    if(status.CarId == pluginEvent.CarId)
+//                    {
+//                        status.IsConnected = true;
+//                        status.CurrentChargeLoad = Math.Min((form.ConnectionLoad / form.ConnectedCars.Count), connectedCar.MaxAcConnectionLoad);
+//                    }
+//                }
+//                // how can i update 
+//            }
+//        }
+//        private Leg ConvertLegNumberToPackageTime(int legNumber)
+//        {
+//            DateTime startTime = StartTime.AddMinutes(LegDuration * (legNumber - 1));
+//            DateTime endTime = startTime.AddMinutes(LegDuration);
 
-            return new Leg(legNumber, startTime, endTime);
-        }
-    }
-}
+//            return new Leg(legNumber, startTime, endTime);
+//        }
+//    }
+//}

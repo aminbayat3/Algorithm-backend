@@ -3,7 +3,6 @@ using algorithm.Models;
 using algorithm.Models.Base;
 using algorithm.Models.DTO;
 using algorithm.Models.Status;
-using algorithm.Services;
 using algorithm.Utils;
 using Microsoft.AspNetCore.Mvc;
 
@@ -13,17 +12,17 @@ namespace algorithm.Controllers
     [ApiController]
     public class CarChargingStatusController : ControllerBase
     {
-        private ChargeManagementService ChargeManagementService { get; set; }
+        //private ChargeManagementService ChargeManagementService { get; set; }
 
-        public CarChargingStatusController(ChargeManagementService chargeManagementService)
-        {
-            ChargeManagementService = chargeManagementService;
-        }
+        //public CarChargingStatusController(ChargeManagementService chargeManagementService)
+        //{
+        //    ChargeManagementService = chargeManagementService;
+        //}
 
         [HttpGet]
         public void GetCarChargingStatus([FromQuery] CarChargingSessionDTO form)
         {
-            ReservationDb.AddReservations(form.Reservations);
+            //ReservationDb.AddReservations(form.Reservations);
 
             Globals.Form = form;
 
@@ -46,9 +45,12 @@ namespace algorithm.Controllers
                 }
 
                 // Print where we can see if the injection was right or not
+                var counter = 1;
                 foreach (var statusOnWB in statuses.SimulatePiAndPo)
                 {
+                    Console.WriteLine(counter);
                     Console.WriteLine(statusOnWB.ToString());
+                    counter++;
                 }
 
 

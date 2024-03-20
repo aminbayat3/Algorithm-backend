@@ -1,4 +1,4 @@
-using algorithm.Services;
+//using algorithm.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,7 +10,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 
-builder.Services.AddScoped<ChargeManagementService>();
+//builder.Services.AddScoped<ChargeManagementService>();
 
 // Add CORS services
 builder.Services.AddCors(options =>

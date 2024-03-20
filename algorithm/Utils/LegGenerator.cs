@@ -1,6 +1,5 @@
 ﻿using algorithm.Models;
 using algorithm.Models.Base;
-using algorithm.Models.Status;
 
 namespace algorithm.Utils
 {
