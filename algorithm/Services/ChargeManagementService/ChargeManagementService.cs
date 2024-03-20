@@ -23,30 +23,17 @@ namespace algorithm.Services.ChargeManagementService
             int numOfConnectedCars = connectedCarStatuses.Count;
 
             // update the future in leg_status_wallboxes until all connected cars are full
-            int counter = legNumber + 1;
+            int counter = legNumber;
 
             while(connectedCarStatuses.FirstOrDefault(carStat => carStat.IsCarFull == false) != null)
             {
                 foreach(var connectedCarStat in connectedCarStatuses)
                 {
-                    updateSocOfConnectedCar(connectedCarStat.CarId, statuses, counter, legNumber, numOfConnectedCars);
-                    connectedCarStat.IsCarFull = true;  
+                    if(!connectedCarStat.IsCarFull) updateSocOfConnectedCar(connectedCarStat, statuses, counter, numOfConnectedCars); 
                    
                 }
                 
                 counter++;
-            }
-
-            if(connectedCarStatuses.Count > 0)
-            {
-                Console.WriteLine("STARTTTT !!!!!!!!!!!!!!!!!!!!______________________________________________________");
-                var counter2 = 1;
-                foreach (var SocStatus in statuses.SocLegs)
-                {
-                    Console.WriteLine("LegNumber: " + counter2 + " StartTime: " + SocStatus.StartTime + " EndTime: " + SocStatus.EndTime);
-                    Console.WriteLine(SocStatus.ToString());
-                    counter2++;
-                }
             }
 
         }
@@ -86,18 +73,30 @@ namespace algorithm.Services.ChargeManagementService
             return carStatuses;
         }
 
-        private void updateSocOfConnectedCar(string carId, Statuses statuses, int currentLegNumber, int previousLegNumber, int numOfConnectedCars)
+        private void updateSocOfConnectedCar(ConnectedCarStatus connectedCarStatus, Statuses statuses, int currentLegNumber, int numOfConnectedCars)
         {
-            for(int i = 0; currentLegNumber < 192 && i < statuses.SocLegs[currentLegNumber].SocStatuses.Count; i++)
+            for(int i = 0; i < statuses.SocLegs[currentLegNumber].SocStatuses.Count; i++)
             {
-                if (statuses.SocLegs[currentLegNumber].SocStatuses[i].CarId == carId) statuses.SocLegs[currentLegNumber].SocStatuses[i].Soc = statuses.SocLegs[currentLegNumber - 1].SocStatuses[i].Soc + calculateSocIncreaseInOneLeg(carId, numOfConnectedCars);
+                if ((statuses.SocLegs[currentLegNumber].SocStatuses[i].CarId == connectedCarStatus.CarId))
+                {
+                    var test = statuses.SocLegs[currentLegNumber - 1].SocStatuses[i].Soc + calculateSocIncreaseInOneLeg(connectedCarStatus.CarId, numOfConnectedCars);
+                    statuses.SocLegs[currentLegNumber].SocStatuses[i].Soc = test;
+
+                    if (test >= connectedCarStatus.Tanksize) connectedCarStatus.IsCarFull = true;
+                }
+                    
+                    
             }
         }
 
         private double calculateSocIncreaseInOneLeg(string carId, int numOfConnectedCars)
         {
+            double loadPerCar = Globals.Form.ConnectionLoad / numOfConnectedCars; 
+            double acLimit = getAcLimitByCarId(carId); 
 
-            return (Globals.Form.LegDuration / 60) * Math.Min(Globals.Form.ConnectionLoad / numOfConnectedCars, getAcLimitByCarId(carId));
+            double min = Math.Min(loadPerCar, acLimit);
+            double socIncrease = (double)(Globals.Form.LegDuration / 60) * min;
+            return socIncrease;
         }
 
         private double getTanksizeByCarId(string carId)
@@ -114,7 +113,11 @@ namespace algorithm.Services.ChargeManagementService
         {
             foreach (var car in CarDb.Cars)
             {
-                if (car.Id.Equals(carId)) return car.MaxAcConnectionLoad;
+                if (car.Id.Equals(carId))
+                {
+                    var aclimit = car.MaxAcConnectionLoad;
+                    return aclimit;
+                }
             }
 
             return 0;

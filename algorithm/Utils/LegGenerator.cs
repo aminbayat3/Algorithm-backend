@@ -6,7 +6,7 @@ namespace algorithm.Utils
     public class LegGenerator 
     {
         // these two methods have similar implementation , so we can write them in one function later instead of two
-        public static Statuses GenerateLegs(DateTime startTime, DateTime endTime, int legDuration)
+        public static Statuses GenerateLegs(DateTime startTime, DateTime endTime, double legDuration)
         {
             var socLegs = new List<StatusOfSocInCars>();
             var wallboxLegs = new List<StatusOnWallBoxes>();

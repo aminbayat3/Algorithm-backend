@@ -7,7 +7,7 @@ namespace algorithm.Models.DTO
         //public List<Reservation> Reservations {  get; set; } 
         public DateTime StartTime { get; set; }
         public DateTime EndTime { get; set; }
-        public int LegDuration { get; set; } = 15; // Minutes
+        public double LegDuration { get; set; } = 15; // Minutes
         public double ConnectionLoad {  get; set; }
     }
 }
