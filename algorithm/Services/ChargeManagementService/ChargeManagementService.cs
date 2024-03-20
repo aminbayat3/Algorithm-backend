@@ -52,7 +52,9 @@ namespace algorithm.Services.ChargeManagementService
         }
 
         private void readDataAndUpdateWallboxesStatuses(Statuses statuses, int legNumber)
-        {
+        { 
+           
+
             for (int i = 0; i < statuses.WallBoxLegs[legNumber].WallBoxStatuses.Count; i++)
             {
                 statuses.WallBoxLegs[legNumber].WallBoxStatuses[i] = statuses.SimulatePiAndPo[legNumber].FutureWallBoxStatuses[i];

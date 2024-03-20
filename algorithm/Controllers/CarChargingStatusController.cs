@@ -34,14 +34,18 @@ namespace algorithm.Controllers
             {
 
                 int legNum = Helper.ConvertTimeToLegNumber(reservation.Expi); // this Helper Class later should be injected to this class . so later this shouldn't be a static class 
+                int ExpoLegNum = Helper.ConvertTimeToLegNumber(reservation.Expo);
 
-                foreach (WallBoxStatus status in statuses.SimulatePiAndPo[legNum].FutureWallBoxStatuses)
+                for (int i = legNum; i < ExpoLegNum; i++)
                 {
-                    if (Helper.GetNumericPart(status.WallBoxId) == Helper.GetNumericPart(reservation.CarId))
+                    foreach (WallBoxStatus status in statuses.SimulatePiAndPo[i].FutureWallBoxStatuses)
                     {
-                        status.CarId = reservation.CarId;
-                        status.IsConnected = true;
-                        status.NeededEnergy = reservation.NeededEnergy;
+                        if (Helper.GetNumericPart(status.WallBoxId) == Helper.GetNumericPart(reservation.CarId))
+                        {
+                            status.CarId = reservation.CarId;
+                            status.IsConnected = true;
+                            status.NeededEnergy = reservation.NeededEnergy;
+                        }
                     }
                 }
 
@@ -57,12 +61,12 @@ namespace algorithm.Controllers
 
             // Print where we can see if the injection was right or not
             //var counter = 1;
-            //foreach (var statusOnWB in statuses.SimulatePiAndPo)
-            //{
-            //    Console.WriteLine("counter: " + counter + " StartTime: " + statusOnWB.StartTime + " EndTime: " + statusOnWB.EndTime);
-            //    Console.WriteLine(statusOnWB.ToString());
-            //    counter++;
-            //}
+            // foreach (var statusOnWB in statuses.SimulatePiAndPo)
+            // {
+            //     Console.WriteLine("counter: " + counter + " StartTime: " + statusOnWB.StartTime + " EndTime: " + statusOnWB.EndTime);
+            //     Console.WriteLine(statusOnWB.ToString());
+            //     counter++;
+            // }
 
 
         }
