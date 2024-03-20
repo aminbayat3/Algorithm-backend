@@ -6,22 +6,22 @@ namespace algorithm.Models
 {
     public class FutureStatusOnWallBoxes : Leg
     {
-        public List<FutureWallBoxStatus> FutureWallBoxStatuses { get; set; } // change the nam to SimulatePluginAndPlugOut
+        public List<WallBoxStatus> FutureWallBoxStatuses { get; set; } // change the nam to SimulatePluginAndPlugOut
 
         public FutureStatusOnWallBoxes(int number, DateTime startTime, DateTime endtime) : base(number, startTime, endtime)
         {
-            FutureWallBoxStatuses = new List<FutureWallBoxStatus>();
+            FutureWallBoxStatuses = new List<WallBoxStatus>();
 
             foreach (var wallbox in WallBoxDb.WallBoxes)
             {
-                FutureWallBoxStatuses.Add(new FutureWallBoxStatus(wallbox.Id));
+                FutureWallBoxStatuses.Add(new WallBoxStatus(wallbox.Id));
             }
         }
 
         public override string ToString()
         {
             string result = "FutureWallBoxStatuses: \n";
-            foreach (FutureWallBoxStatus status in FutureWallBoxStatuses)
+            foreach (WallBoxStatus status in FutureWallBoxStatuses)
             {
                 result += status.ToString() + "\n";
             }

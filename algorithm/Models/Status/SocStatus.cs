@@ -1,4 +1,5 @@
-﻿using algorithm.Models.Base;
+﻿using algorithm.Data;
+using algorithm.Models.Base;
 
 namespace algorithm.Models.Status
 {
@@ -7,10 +8,15 @@ namespace algorithm.Models.Status
         public string CarId { get; set; }
         public double Soc { get; set; }
 
-        public SocStatus()
+        public SocStatus(string carId)
         {
             Soc = 0;
-            CarId = null;
+            CarId = carId;
+        }
+
+        public override string ToString()
+        {
+            return $"CarId: {CarId}, Soc: {Soc}";
         }
     }
 }
