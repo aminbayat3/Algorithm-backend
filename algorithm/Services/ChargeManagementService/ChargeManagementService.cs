@@ -59,6 +59,34 @@ namespace algorithm.Services.ChargeManagementService
                    
                 }
                 connectedCarStatuses.RemoveAll(carStat => statuses.SocLegs[futureCounter].SocStatuses.Any(socLeg => (socLeg.CarId == carStat.CarId) && socLeg.IsFull));
+
+                //***** getting all the normal cars by filtering the ones that their need is met (we can move this logic to a method later)
+                double totalChargeLoadForNormalCars = 0;
+
+                var normalCarStatuses = connectedCarStatuses
+                                          .Where(carStat => !statuses.SocLegs[futureCounter].SocStatuses
+                                          .Any(socLeg => (socLeg.CarId == carStat.CarId) && socLeg.IsNeedMet))
+                                          .ToList();
+
+                foreach(var normalCarStat in  normalCarStatuses)
+                {
+                    var targetWbStat = getWBStatusByCarId(statuses, futureCounter, normalCarStat.CarId);
+                    targetWbStat.CurrentChargeLoad = Globals.Form.ConnectionLoad / normalCarStatuses.Count;
+
+                    totalChargeLoadForNormalCars += targetWbStat.CurrentChargeLoad;
+                }
+
+                //****** getting all car statuses which their need is met (we can move this logic to a method later)
+                var needMetCars = connectedCarStatuses
+                                          .Where(carStat => statuses.SocLegs[futureCounter].SocStatuses
+                                          .Any(socLeg => (socLeg.CarId == carStat.CarId) && socLeg.IsNeedMet))
+                                          .ToList();
+                foreach(var needMetCarStat in needMetCars)
+                {
+                    var targetWbStat = getWBStatusByCarId(statuses, futureCounter, needMetCarStat.CarId);
+                    targetWbStat.CurrentChargeLoad = (Globals.Form.ConnectionLoad - totalChargeLoadForNormalCars) / needMetCars.Count;
+                }
+
                 futureCounter++;
             }
         }
@@ -103,19 +131,9 @@ namespace algorithm.Services.ChargeManagementService
                         statuses.SocLegs[futureLegNumber].SocStatuses[i].Soc = newSoc;
                         statuses.SocLegs[futureLegNumber].SocStatuses[i].IsNeedMet = true;
 
-                        //update the ChargeLoad for Wb status for fulfilled car(or needmet car)
-
-                        // the summation of all the wb status' chargeload for the cars that are not fufilled(need) and not full
-                          double totalChargeLoad = statuses.SocLegs[futureLegNumber].SocStatuses.Where(socStat => !socStat.IsNeedMet).Sum(socStat => getWBStatusByCarId(statuses, futureLegNumber, socStat.CarId).CurrentChargeLoad);
-
                     } else
                     {
                         statuses.SocLegs[futureLegNumber].SocStatuses[i].Soc = newSoc;
-
-                        //update the chargeLoad for Wb status for not full car
-                        var targetWbStat = getWBStatusByCarId(statuses, futureLegNumber, connectedCarStatus.CarId);
-
-                        targetWbStat.CurrentChargeLoad = Globals.Form.ConnectionLoad / numOfChargingCars;
                     }
                 }
                       
