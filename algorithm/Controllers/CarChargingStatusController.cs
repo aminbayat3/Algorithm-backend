@@ -36,6 +36,8 @@ namespace algorithm.Controllers
                 int legNum = Helper.ConvertTimeToLegNumber(reservation.Expi); // this Helper Class later should be injected to this class . so later this shouldn't be a static class 
                 int ExpoLegNum = Helper.ConvertTimeToLegNumber(reservation.Expo);
 
+                Globals.PluginEventsLegNumber.Add(legNum);
+
                 for (int i = legNum; i < ExpoLegNum; i++)
                 {
                     foreach (WallBoxStatus status in statuses.SimulatePiAndPo[i].FutureWallBoxStatuses)
@@ -56,29 +58,29 @@ namespace algorithm.Controllers
                 ChargeManagementService.legManager(statuses, legNumber);
 
                 // normal sleeping time is the package length
-                Thread.Sleep(1);
+                Thread.Sleep(100);
             }
 
-           
-           
-                Console.WriteLine("STARTTTT SOC !!!!!!!!!!!!!!!!!!!!______________________________________________________");
-                var counter2 = 1;
-                foreach (var SocStatus in statuses.SocLegs)
-                {
-                    Console.WriteLine("LegNumber: " + counter2 + " StartTime: " + SocStatus.StartTime + " EndTime: " + SocStatus.EndTime);
-                    Console.WriteLine(SocStatus.ToString());
-                    counter2++;
-                }
 
-            //Print where we can see if the injection was right or not
-            Console.WriteLine("STARTTTT WALLBoxxx !!!!!!!!!!!!!!!!!!!!______________________________________________________");
-            var counter = 1;
-            foreach (var statusOnWB in statuses.SimulatePiAndPo)
+
+            Console.WriteLine("STARTTTT SOC !!!!!!!!!!!!!!!!!!!!______________________________________________________");
+            var counter2 = 1;
+            foreach (var SocStatus in statuses.SocLegs)
             {
-                Console.WriteLine("counter: " + counter + " StartTime: " + statusOnWB.StartTime + " EndTime: " + statusOnWB.EndTime);
-                Console.WriteLine(statusOnWB.ToString());
-                counter++;
+                Console.WriteLine("LegNumber: " + counter2 + " StartTime: " + SocStatus.StartTime + " EndTime: " + SocStatus.EndTime);
+                Console.WriteLine(SocStatus.ToString());
+                counter2++;
             }
+
+            ////Print where we can see if the injection was right or not
+            //Console.WriteLine("STARTTTT WALLBoxxx !!!!!!!!!!!!!!!!!!!!______________________________________________________");
+            //var counter = 1;
+            //foreach (var statusOnWB in statuses.SimulatePiAndPo)
+            //{
+            //    Console.WriteLine("counter: " + counter + " StartTime: " + statusOnWB.StartTime + " EndTime: " + statusOnWB.EndTime);
+            //    Console.WriteLine(statusOnWB.ToString());
+            //    counter++;
+            //}
 
 
         }
