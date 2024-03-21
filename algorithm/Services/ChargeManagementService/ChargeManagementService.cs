@@ -18,7 +18,7 @@ namespace algorithm.Services.ChargeManagementService
             // first update the wallbox status
             readDataAndUpdateWallboxesStatuses(statuses, legNumber);
 
-            if(Globals.PluginEventsLegNumber.FirstOrDefault(piLegNum => piLegNum == legNumber) != 0) updateFutureInWbLegs(statuses, legNumber);
+           updateFutureInWbLegs(statuses, legNumber);
 
         }
 

@@ -36,8 +36,6 @@ namespace algorithm.Controllers
                 int legNum = Helper.ConvertTimeToLegNumber(reservation.Expi); // this Helper Class later should be injected to this class . so later this shouldn't be a static class 
                 int ExpoLegNum = Helper.ConvertTimeToLegNumber(reservation.Expo);
 
-                Globals.PluginEventsLegNumber.Add(legNum);
-
                 for (int i = legNum; i < ExpoLegNum; i++)
                 {
                     foreach (WallBoxStatus status in statuses.SimulatePiAndPo[i].FutureWallBoxStatuses)
