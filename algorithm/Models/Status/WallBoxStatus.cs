@@ -21,5 +21,10 @@
         {
             return $"CarId: {CarId}, WallBoxId: {WallBoxId}, IsConnected: {IsConnected}, NeededEnergy: {NeededEnergy}";
         }
+
+        public string CommandWB()
+        {
+            return $"WallBoxId: {WallBoxId},  CurrentChargeLoad: {CurrentChargeLoad}";
+        }
     }
 }

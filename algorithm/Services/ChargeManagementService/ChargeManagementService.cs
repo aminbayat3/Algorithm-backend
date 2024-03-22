@@ -13,12 +13,16 @@ namespace algorithm.Services.ChargeManagementService
 {
     public class ChargeManagementService
     {
-        public void legManager(Statuses statuses, int legNumber) // it should check if we have any plugin before this 
+        public Notification legManager(Statuses statuses, int legNumber) // it should check if we have any plugin before this 
         {
             // first update the wallbox status
             readDataAndUpdateWallboxesStatuses(statuses, legNumber);
 
            updateFutureInWbLegs(statuses, legNumber);
+
+            var commandToWb = PrintTheCommandToWB(statuses, legNumber);
+
+            return new Notification();
 
         }
 
@@ -50,7 +54,7 @@ namespace algorithm.Services.ChargeManagementService
 
             connectedCarStatuses.RemoveAll(carStat => statuses.SocLegs[futureCounter - 1].SocStatuses.Any(socLeg => (socLeg.CarId == carStat.CarId) && socLeg.IsFull));
 
-            UpdateSocOfNextLegWithCurrentOne(legNumber, statuses);
+            if(legNumber > 0) UpdateSocOfNextLegWithCurrentOne(legNumber, statuses);
 
             // update the future in leg_status_wallboxes until all connected cars are full
             while (connectedCarStatuses.Count > 0)
@@ -99,6 +103,17 @@ namespace algorithm.Services.ChargeManagementService
                 futureCounter++;
             }
             
+        }
+
+        private string PrintTheCommandToWB(Statuses statuses, int legNumber)
+        {
+            string command = "";
+            statuses.WallBoxLegs[legNumber].WallBoxStatuses.ForEach(Wbstatus =>
+            {
+                command = command + "  ||  " + Wbstatus.CommandWB;
+            });
+
+            return command;
         }
 
         private List<ConnectedCarStatus> getDataFromConnectedCars(Statuses statuses, int legNumber)

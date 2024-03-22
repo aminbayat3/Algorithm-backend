@@ -55,7 +55,11 @@ namespace algorithm.Controllers
 
             for (int legNumber = 0; legNumber < statuses.SocLegs.Count; legNumber++)
             {
-                ChargeManagementService.legManager(statuses, legNumber);
+                var notification = ChargeManagementService.legManager(statuses, legNumber);
+
+                // notification
+                Console.WriteLine("CommandToWB: " + notification.CommandToWB + "     " + "NotificationToUser: " + notification.NotificationToUser);
+              
 
                 // normal sleeping time is the package length
                 Thread.Sleep(100);
