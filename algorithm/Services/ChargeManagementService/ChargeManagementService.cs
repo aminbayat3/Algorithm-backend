@@ -61,7 +61,7 @@ namespace algorithm.Services.ChargeManagementService
             while (connectedCarStatuses.Count > 0)
             {
                 // make update to wb statuses
-                if(futureCounter > legNumber ) statuses.WallBoxLegs[futureCounter].WallBoxStatuses = statuses.WallBoxLegs[futureCounter - 1].WallBoxStatuses;
+                if(futureCounter > legNumber && futureCounter < 192 ) statuses.WallBoxLegs[futureCounter].WallBoxStatuses = statuses.WallBoxLegs[futureCounter - 1].WallBoxStatuses;
 
                 //***** getting all the normal cars by filtering the ones that their need is met (we can move this logic to a method later)
                 double totalChargeLoadForNormalCars = 0;
@@ -111,7 +111,7 @@ namespace algorithm.Services.ChargeManagementService
             string command = "";
             statuses.WallBoxLegs[legNumber].WallBoxStatuses.ForEach(Wbstatus =>
             {
-                command = command + "  ||  " + Wbstatus.CommandWB;
+                command = command + "  ||  " + Wbstatus.CommandWB();
             });
 
             return command;
