@@ -95,7 +95,7 @@ namespace algorithm.Services.ChargeManagementService
                     targetWbStat.CurrentChargeLoad = Math.Min(((Globals.Form.ConnectionLoad - totalChargeLoadForNormalCars) / needMetCars.Count), getAcLimitByCarId(needMetCarStat.CarId));
                 }
 
-                UpdateSocOfNextLegWithCurrentOne(futureCounter, statuses);
+                //UpdateSocOfNextLegWithCurrentOne(futureCounter, statuses);
 
                 futureCounter++;
             }
@@ -127,7 +127,7 @@ namespace algorithm.Services.ChargeManagementService
             {
                 if ((statuses.SocLegs[futureLegNumber].SocStatuses[i].CarId == connectedCarStatus.CarId))
                 {
-                    var newSoc = statuses.SocLegs[futureLegNumber].SocStatuses[i].Soc + calculateSocIncreaseInOneLeg(connectedCarStatus.CarId, numOfChargingCars);
+                    var newSoc = statuses.SocLegs[futureLegNumber - 1].SocStatuses[i].Soc + calculateSocIncreaseInOneLeg(connectedCarStatus.CarId, numOfChargingCars);
                     if (newSoc >= connectedCarStatus.Tanksize)
                     {
                         statuses.SocLegs[futureLegNumber].SocStatuses[i].Soc = connectedCarStatus.Tanksize;
