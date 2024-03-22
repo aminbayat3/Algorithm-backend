@@ -20,9 +20,9 @@ namespace algorithm.Services.ChargeManagementService
 
            updateFutureInWbLegs(statuses, legNumber);
 
-            var commandToWb = PrintTheCommandToWB(statuses, legNumber);
+            var commandToWb = GetTheCommandToWB(statuses, legNumber);
 
-            return new Notification();
+            return new Notification(commandToWb, "");
 
         }
 
@@ -105,7 +105,7 @@ namespace algorithm.Services.ChargeManagementService
             
         }
 
-        private string PrintTheCommandToWB(Statuses statuses, int legNumber)
+        private string GetTheCommandToWB(Statuses statuses, int legNumber)
         {
             string command = "";
             statuses.WallBoxLegs[legNumber].WallBoxStatuses.ForEach(Wbstatus =>
