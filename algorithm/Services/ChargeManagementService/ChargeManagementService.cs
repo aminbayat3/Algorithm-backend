@@ -50,7 +50,7 @@ namespace algorithm.Services.ChargeManagementService
 
             connectedCarStatuses.RemoveAll(carStat => statuses.SocLegs[futureCounter - 1].SocStatuses.Any(socLeg => (socLeg.CarId == carStat.CarId) && socLeg.IsFull));
 
-            //if(connectedCarStatuses.Count == 0) UpdateSocOfNextLegWithCurrentOne(legNumber, statuses);
+            if (connectedCarStatuses.Count == 0) UpdateSocOfNextLegWithCurrentOne(legNumber, statuses);
 
             // update the future in leg_status_wallboxes until all connected cars are full
             while (connectedCarStatuses.Count > 0)
@@ -158,10 +158,9 @@ namespace algorithm.Services.ChargeManagementService
         {
             for(int i = 0; i < statuses.SocLegs[legNumber].SocStatuses.Count; i++)
             {
-                statuses.SocLegs[legNumber + 1].SocStatuses[i].CarId = statuses.SocLegs[legNumber].SocStatuses[i].CarId;
-                statuses.SocLegs[legNumber + 1].SocStatuses[i].Soc = statuses.SocLegs[legNumber].SocStatuses[i].Soc;
-                statuses.SocLegs[legNumber + 1].SocStatuses[i].IsFull = statuses.SocLegs[legNumber].SocStatuses[i].IsFull;
-                statuses.SocLegs[legNumber + 1].SocStatuses[i].IsNeedMet = statuses.SocLegs[legNumber].SocStatuses[i].IsNeedMet;
+                statuses.SocLegs[legNumber].SocStatuses[i].Soc = statuses.SocLegs[legNumber - 1].SocStatuses[i].Soc;
+                statuses.SocLegs[legNumber].SocStatuses[i].IsFull = statuses.SocLegs[legNumber - 1].SocStatuses[i].IsFull;
+                statuses.SocLegs[legNumber].SocStatuses[i].IsNeedMet = statuses.SocLegs[legNumber - 1].SocStatuses[i].IsNeedMet;
             }
             
         }
