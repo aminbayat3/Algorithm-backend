@@ -40,6 +40,8 @@ namespace algorithm.Controllers
                 {
                     foreach (WallBoxStatus status in statuses.SimulatePiAndPo[i].FutureWallBoxStatuses)
                     {
+                        status.CarId = $"Car{Helper.GetNumericPart(status.WallBoxId)}";
+
                         if (Helper.GetNumericPart(status.WallBoxId) == Helper.GetNumericPart(reservation.CarId))
                         {
                             status.CarId = reservation.CarId;
