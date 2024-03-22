@@ -45,27 +45,24 @@ namespace algorithm.Services.ChargeManagementService
 
             int futureCounter = legNumber;
 
-            // removing all the full cars from all the connected cars(this isn't working correctly)
-            if(futureCounter > 2)
-            {
-                var fullcar1 = statuses.SocLegs[futureCounter - 2].SocStatuses.Find(socLeg => socLeg.IsFull == true);
-                var fullcar2 = statuses.SocLegs[futureCounter - 1].SocStatuses.Find(socLeg => socLeg.IsFull == true);
-                var fullcar3 = statuses.SocLegs[futureCounter].SocStatuses.Find(socLeg => socLeg.IsFull == true);
-            }
-
             //updating the current soc leg as well
-            UpdateCurrentSocLegFullState(legNumber, connectedCarStatuses);
+            //if (futureCounter > 0) UpdateCurrentSocLegFullState(legNumber, statuses, connectedCarStatuses);
 
             connectedCarStatuses.RemoveAll(carStat => statuses.SocLegs[futureCounter - 1].SocStatuses.Any(socLeg => socLeg.CarId == carStat.CarId && socLeg.IsFull));
+
+            if(connectedCarStatuses.Count == 0) UpdateSocOfNextLegWithCurrentOne(legNumber, statuses);
 
             // update the future in leg_status_wallboxes until all connected cars are full
             while (connectedCarStatuses.Count > 0)
             {
+                // make update to wb statuses
+                statuses.WallBoxLegs[futureCounter + 1].WallBoxStatuses = statuses.WallBoxLegs[futureCounter].WallBoxStatuses;
+             
                 var numOfChargingCars = connectedCarStatuses.Count;
 
                 foreach (var connectedCarStat in connectedCarStatuses)
                 {
-                   updateSocOfConnectedCar(statuses, connectedCarStat, futureCounter, legNumber, numOfChargingCars);
+                   updateSocOfConnectedCar(statuses, connectedCarStat, futureCounter, numOfChargingCars);
                    
                 }
                 connectedCarStatuses.RemoveAll(carStat => statuses.SocLegs[futureCounter].SocStatuses.Any(socLeg => (socLeg.CarId == carStat.CarId) && socLeg.IsFull));
@@ -98,8 +95,11 @@ namespace algorithm.Services.ChargeManagementService
                     targetWbStat.CurrentChargeLoad = Math.Min(((Globals.Form.ConnectionLoad - totalChargeLoadForNormalCars) / needMetCars.Count), getAcLimitByCarId(needMetCarStat.CarId));
                 }
 
+                UpdateSocOfNextLegWithCurrentOne(futureCounter, statuses);
+
                 futureCounter++;
             }
+            
         }
 
         private List<ConnectedCarStatus> getDataFromConnectedCars(Statuses statuses, int legNumber)
@@ -121,18 +121,18 @@ namespace algorithm.Services.ChargeManagementService
             return carStatuses;
         }
 
-        private void updateSocOfConnectedCar(Statuses statuses, ConnectedCarStatus connectedCarStatus, int futureLegNumber, int presentLegNumber, int numOfChargingCars)
+        private void updateSocOfConnectedCar(Statuses statuses, ConnectedCarStatus connectedCarStatus, int futureLegNumber, int numOfChargingCars)
         {
             for(int i = 0; futureLegNumber < 192 && i < statuses.SocLegs[futureLegNumber].SocStatuses.Count; i++)
             {
                 if ((statuses.SocLegs[futureLegNumber].SocStatuses[i].CarId == connectedCarStatus.CarId))
                 {
-                    var newSoc = statuses.SocLegs[futureLegNumber - 1].SocStatuses[i].Soc + calculateSocIncreaseInOneLeg(connectedCarStatus.CarId, numOfChargingCars);
+                    var newSoc = statuses.SocLegs[futureLegNumber].SocStatuses[i].Soc + calculateSocIncreaseInOneLeg(connectedCarStatus.CarId, numOfChargingCars);
                     if (newSoc >= connectedCarStatus.Tanksize)
                     {
                         statuses.SocLegs[futureLegNumber].SocStatuses[i].Soc = connectedCarStatus.Tanksize;
                         statuses.SocLegs[futureLegNumber].SocStatuses[i].IsFull = true;
-                        statuses.SocLegs[presentLegNumber].SocStatuses[i].IsFull = true;
+                        statuses.SocLegs[futureLegNumber].SocStatuses[i].IsNeedMet = true;
 
                         // update the ChargeLoad for Wb status for full car
                         var targetWbStat = getWBStatusByCarId(statuses, futureLegNumber, connectedCarStatus.CarId);
@@ -142,28 +142,45 @@ namespace algorithm.Services.ChargeManagementService
                     {
                         statuses.SocLegs[futureLegNumber].SocStatuses[i].Soc = newSoc;
                         statuses.SocLegs[futureLegNumber].SocStatuses[i].IsNeedMet = true;
+                        statuses.SocLegs[futureLegNumber].SocStatuses[i].IsFull = false;
 
                     } else
                     {
                         statuses.SocLegs[futureLegNumber].SocStatuses[i].Soc = newSoc;
+                        statuses.SocLegs[futureLegNumber].SocStatuses[i].IsNeedMet = false;
+                        statuses.SocLegs[futureLegNumber].SocStatuses[i].IsFull = false;
                     }
                 }
                       
             }
         }
 
+        private void UpdateSocOfNextLegWithCurrentOne(int legNumber, Statuses statuses)
+        {
+            for(int i = 0; i < statuses.SocLegs[legNumber].SocStatuses.Count; i++)
+            {
+                statuses.SocLegs[legNumber + 1].SocStatuses[i].CarId = statuses.SocLegs[legNumber].SocStatuses[i].CarId;
+                statuses.SocLegs[legNumber + 1].SocStatuses[i].Soc = statuses.SocLegs[legNumber].SocStatuses[i].Soc;
+                statuses.SocLegs[legNumber + 1].SocStatuses[i].IsFull = statuses.SocLegs[legNumber].SocStatuses[i].IsFull;
+                statuses.SocLegs[legNumber + 1].SocStatuses[i].IsNeedMet = statuses.SocLegs[legNumber].SocStatuses[i].IsNeedMet;
+            }
+            
+        }
+
+
         private void UpdateCurrentSocLegFullState(int legNumber, Statuses statuses, List<ConnectedCarStatus> connectedCarStatuses)
         {
-            var connectedCarIds = connectedCarStatuses.Select(carStat => carStat.CarId).ToList(); // only the car ids that their corresponding soc stat(same carid) has isfull to true
+            var socLegStats = statuses.SocLegs[legNumber - 1].SocStatuses.Where(socLegStat => connectedCarStatuses.Any(carStat => (carStat.CarId == socLegStat.CarId) && socLegStat.IsFull)).ToList();
 
-            var results = statuses.SocLegs[legNumber].SocStatuses.Where(socLegStat => connectedCarIds.Contains(socLegStat.CarId)).ToList(); 
-
-            if (results.Count > 0)
+            if (socLegStats.Count > 0)
             {
-                foreach(var result in results)
+                var targetSocStats = statuses.SocLegs[legNumber].SocStatuses.Where(socStat => socLegStats.Any(socLegStat => socLegStat.CarId == socStat.CarId)).ToList();
+
+                // foreach loop
+                targetSocStats.ForEach(targetSocStat =>
                 {
-                    result.IsFull
-                }
+                    targetSocStat.IsFull = true;
+                });
             }
         }
 
@@ -206,7 +223,7 @@ namespace algorithm.Services.ChargeManagementService
         {
             foreach(var wbStat in statuses.WallBoxLegs[legNumber].WallBoxStatuses)
             {
-                if($"Car{Helper.GetNumericPart(wbStat.WallBoxId)}" == carId) return wbStat;
+                if(wbStat.CarId == carId) return wbStat;
             }
             return null;
         }
