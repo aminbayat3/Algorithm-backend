@@ -21,6 +21,7 @@ namespace algorithm.Services.ChargeManagementService
            updateFutureInWbLegs(statuses, legNumber);
 
             var commandToWb = GetTheCommandToWB(statuses, legNumber);
+            var notificationToUser = GetNotificationToUser(statuses, legNumber);
 
             return new Notification(commandToWb, "");
 
@@ -45,7 +46,7 @@ namespace algorithm.Services.ChargeManagementService
         private void updateFutureInWbLegs(Statuses statuses, int legNumber)
         {
             // for each car that is connected to a wallbox, get Tanksize, Need and Expo
-            var connectedCarStatuses = getDataFromConnectedCars(statuses, legNumber);
+            var connectedCarStatuses = GetDataFromConnectedCars(statuses, legNumber);
 
             int futureCounter = legNumber;
 
@@ -116,7 +117,45 @@ namespace algorithm.Services.ChargeManagementService
             return command;
         }
 
-        private List<ConnectedCarStatus> getDataFromConnectedCars(Statuses statuses, int legNumber)
+        private string GetNotificationToUser(Statuses statuses, int legNumber) 
+        {
+            var connectedCarStatuses = GetDataFromConnectedCars(statuses, legNumber);
+
+            var notificationSocStats = new List<SocStatus>();
+             connectedCarStatuses.ForEach(carStat =>
+            {
+                notificationSocStats.Add(statuses.SocLegs[legNumber].SocStatuses.FirstOrDefault(socLegStat => socLegStat.CarId == carStat.CarId));
+            });
+
+            var carExpouts = new List<CarExpectedPlugOut>();
+            bool previousConnectionState = false;
+            bool presentConnectionState = false;
+            string notificationString = "";
+
+            foreach (var wbLeg in statuses.WallBoxLegs)
+            {
+                wbLeg.WallBoxStatuses.ForEach(wbLegStat =>
+                {
+                    presentConnectionState = wbLegStat.IsConnected;
+
+                    if (previousConnectionState && !presentConnectionState)
+                    {
+                        carExpouts.Add(new CarExpectedPlugOut(wbLeg.StartTime, wbLegStat.CarId));
+                    }
+                });
+
+                previousConnectionState = presentConnectionState;
+            }
+
+            notificationSocStats.ForEach(notificationStat =>
+            {
+                notificationString += "   CarId: " + notificationStat.CarId + " " + notificationStat.
+                var target = carExpouts.Find(carExpo => carExpo.CarId == notificationStat.CarId);
+            })
+
+        }
+
+        private List<ConnectedCarStatus> GetDataFromConnectedCars(Statuses statuses, int legNumber)
         {
             // getting all the status of connected wallboxes 
             List<WallBoxStatus> connectedWBStatuses = statuses.WallBoxLegs[legNumber].WallBoxStatuses.Where(stat => stat.IsConnected).ToList();
