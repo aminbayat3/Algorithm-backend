@@ -23,7 +23,7 @@ namespace algorithm.Services.ChargeManagementService
             var commandToWb = GetTheCommandToWB(statuses, legNumber);
             var notificationToUser = GetNotificationToUser(statuses, legNumber);
 
-            return new Notification(commandToWb, "");
+            return new Notification(commandToWb, notificationToUser);
 
         }
 
@@ -120,39 +120,52 @@ namespace algorithm.Services.ChargeManagementService
         private string GetNotificationToUser(Statuses statuses, int legNumber) 
         {
             var connectedCarStatuses = GetDataFromConnectedCars(statuses, legNumber);
-
-            var notificationSocStats = new List<SocStatus>();
+            string notificationString = "";
+            
              connectedCarStatuses.ForEach(carStat =>
             {
-                notificationSocStats.Add(statuses.SocLegs[legNumber].SocStatuses.FirstOrDefault(socLegStat => socLegStat.CarId == carStat.CarId));
+                notificationString += ("CarId:  " + carStat.CarId);
+
+                statuses.SocLegs.ForEach(socLeg =>
+                {
+                    var NeedSocStat = socLeg.SocStatuses.FirstOrDefault(socLegStat => (socLegStat.CarId == carStat.CarId) && socLegStat.IsNeedMet);
+                    var FullSocStat = socLeg.SocStatuses.FirstOrDefault(socLegStat => (socLegStat.CarId == carStat.CarId) && socLegStat.IsFull);
+
+                    if (NeedSocStat != null)
+                    {
+                        notificationString += "  NeedMetTime:  " + socLeg.StartTime;
+                    }
+
+                    if(FullSocStat != null)
+                    {
+                        notificationString += "  FullTime:  " + socLeg.StartTime;
+                    }
+                });
             });
 
-            var carExpouts = new List<CarExpectedPlugOut>();
-            bool previousConnectionState = false;
-            bool presentConnectionState = false;
-            string notificationString = "";
-
-            foreach (var wbLeg in statuses.WallBoxLegs)
+            connectedCarStatuses.ForEach(carStat =>
             {
-                wbLeg.WallBoxStatuses.ForEach(wbLegStat =>
+                var expoLegNum = 0;
+                foreach(var reservation in ReservationDb.Reservations)
                 {
-                    presentConnectionState = wbLegStat.IsConnected;
-
-                    if (previousConnectionState && !presentConnectionState)
+                    if (reservation.CarId == carStat.CarId)
                     {
-                        carExpouts.Add(new CarExpectedPlugOut(wbLeg.StartTime, wbLegStat.CarId));
+                        expoLegNum = Helper.ConvertTimeToLegNumber(reservation.Expo);
+                        break;
+                    }
+                }
+
+                statuses.SocLegs[expoLegNum].SocStatuses.ForEach(socLeg =>
+                {
+                    if (socLeg.CarId == carStat.CarId)
+                    {
+                        notificationString += " KWH in EXPO: " + socLeg.Soc;
                     }
                 });
 
-                previousConnectionState = presentConnectionState;
-            }
+            });
 
-            notificationSocStats.ForEach(notificationStat =>
-            {
-                notificationString += "   CarId: " + notificationStat.CarId + " " + notificationStat.
-                var target = carExpouts.Find(carExpo => carExpo.CarId == notificationStat.CarId);
-            })
-
+            return notificationString;
         }
 
         private List<ConnectedCarStatus> GetDataFromConnectedCars(Statuses statuses, int legNumber)
