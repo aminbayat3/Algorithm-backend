@@ -50,7 +50,7 @@ namespace algorithm.Services.ChargeManagementService
 
             connectedCarStatuses.RemoveAll(carStat => statuses.SocLegs[futureCounter - 1].SocStatuses.Any(socLeg => (socLeg.CarId == carStat.CarId) && socLeg.IsFull));
 
-            if (connectedCarStatuses.Count == 0) UpdateSocOfNextLegWithCurrentOne(legNumber, statuses);
+            UpdateSocOfNextLegWithCurrentOne(legNumber, statuses);
 
             // update the future in leg_status_wallboxes until all connected cars are full
             while (connectedCarStatuses.Count > 0)
