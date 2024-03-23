@@ -33,7 +33,10 @@ namespace algorithm.Services.ChargeManagementService
 
             for (int i = 0; i < statuses.WallBoxLegs[legNumber].WallBoxStatuses.Count; i++)
             {
-                statuses.WallBoxLegs[legNumber].WallBoxStatuses[i] = statuses.SimulatePiAndPo[legNumber].FutureWallBoxStatuses[i];
+                statuses.WallBoxLegs[legNumber].WallBoxStatuses[i].WallBoxId = statuses.SimulatePiAndPo[legNumber].FutureWallBoxStatuses[i].WallBoxId;
+                statuses.WallBoxLegs[legNumber].WallBoxStatuses[i].CarId = statuses.SimulatePiAndPo[legNumber].FutureWallBoxStatuses[i].CarId;
+                statuses.WallBoxLegs[legNumber].WallBoxStatuses[i].IsConnected = statuses.SimulatePiAndPo[legNumber].FutureWallBoxStatuses[i].IsConnected;
+                statuses.WallBoxLegs[legNumber].WallBoxStatuses[i].NeededEnergy = statuses.SimulatePiAndPo[legNumber].FutureWallBoxStatuses[i].NeededEnergy;
             }
 
             //Print where we can see if the injection was right or no
@@ -61,7 +64,7 @@ namespace algorithm.Services.ChargeManagementService
             while (connectedCarStatuses.Count > 0)
             {
                 // make update to wb statuses
-                if(futureCounter > legNumber && futureCounter < 192 ) statuses.WallBoxLegs[futureCounter].WallBoxStatuses = statuses.WallBoxLegs[futureCounter - 1].WallBoxStatuses;
+                if (futureCounter > legNumber && futureCounter < 192) UpdateCurrentWbWithPreviousOne(futureCounter, statuses);
 
                 //***** getting all the normal cars by filtering the ones that their need is met (we can move this logic to a method later)
                 double totalChargeLoadForNormalCars = 0;
@@ -75,7 +78,6 @@ namespace algorithm.Services.ChargeManagementService
                 {
                     var targetWbStat = getWBStatusByCarId(statuses, futureCounter, normalCarStat.CarId);
                     targetWbStat.CurrentChargeLoad = Math.Min((Globals.Form.ConnectionLoad / normalCarStatuses.Count), getAcLimitByCarId(normalCarStat.CarId));
-
                     totalChargeLoadForNormalCars += targetWbStat.CurrentChargeLoad;
                 }
 
@@ -103,12 +105,12 @@ namespace algorithm.Services.ChargeManagementService
 
                 futureCounter++;
             }
-            
         }
 
         private string GetTheCommandToWB(Statuses statuses, int legNumber)
         {
             string command = "";
+            
             statuses.WallBoxLegs[legNumber].WallBoxStatuses.ForEach(Wbstatus =>
             {
                 command = command + "  ||  " + Wbstatus.CommandWB();
@@ -121,29 +123,35 @@ namespace algorithm.Services.ChargeManagementService
         {
             var connectedCarStatuses = GetDataFromConnectedCars(statuses, legNumber);
             string notificationString = "";
+            bool isNeedTimePrinted = false;
+            bool isFullTimePrinted = false;
             
-             connectedCarStatuses.ForEach(carStat =>
-            {
+             foreach(var carStat in connectedCarStatuses) { 
                 notificationString += ("CarId:  " + carStat.CarId);
 
-                statuses.SocLegs.ForEach(socLeg =>
+                foreach (var socLeg in statuses.SocLegs)
                 {
                     var NeedSocStat = socLeg.SocStatuses.FirstOrDefault(socLegStat => (socLegStat.CarId == carStat.CarId) && socLegStat.IsNeedMet);
                     var FullSocStat = socLeg.SocStatuses.FirstOrDefault(socLegStat => (socLegStat.CarId == carStat.CarId) && socLegStat.IsFull);
 
-                    if (NeedSocStat != null)
+                    if ((NeedSocStat != null) && !isNeedTimePrinted)
                     {
                         notificationString += "  NeedMetTime:  " + socLeg.StartTime;
+                        isNeedTimePrinted = true;
                     }
 
-                    if(FullSocStat != null)
+                    if ((FullSocStat != null) && !isFullTimePrinted)
                     {
                         notificationString += "  FullTime:  " + socLeg.StartTime;
+                        isFullTimePrinted = true;
                     }
-                });
-            });
 
-            connectedCarStatuses.ForEach(carStat =>
+                    if (isFullTimePrinted && isNeedTimePrinted) break;
+                }
+           
+            }
+
+            foreach(var carStat in connectedCarStatuses)
             {
                 var expoLegNum = 0;
                 foreach(var reservation in ReservationDb.Reservations)
@@ -155,15 +163,16 @@ namespace algorithm.Services.ChargeManagementService
                     }
                 }
 
-                statuses.SocLegs[expoLegNum].SocStatuses.ForEach(socLeg =>
+                foreach(var socLeg in statuses.SocLegs[expoLegNum].SocStatuses)
                 {
                     if (socLeg.CarId == carStat.CarId)
                     {
                         notificationString += " KWH in EXPO: " + socLeg.Soc;
+                        break;
                     }
-                });
+                }
 
-            });
+            }
 
             return notificationString;
         }
@@ -203,6 +212,7 @@ namespace algorithm.Services.ChargeManagementService
                         // update the ChargeLoad for Wb status for full car
                         var targetWbStat = getWBStatusByCarId(statuses, futureLegNumber, connectedCarStatus.CarId);
                         targetWbStat.CurrentChargeLoad = 0;
+                        
 
                     } else if(newSoc >= connectedCarStatus.NeededEnergy)
                     {
@@ -228,6 +238,19 @@ namespace algorithm.Services.ChargeManagementService
                 statuses.SocLegs[legNumber].SocStatuses[i].Soc = statuses.SocLegs[legNumber - 1].SocStatuses[i].Soc;
                 statuses.SocLegs[legNumber].SocStatuses[i].IsFull = statuses.SocLegs[legNumber - 1].SocStatuses[i].IsFull;
                 statuses.SocLegs[legNumber].SocStatuses[i].IsNeedMet = statuses.SocLegs[legNumber - 1].SocStatuses[i].IsNeedMet;
+            }
+            
+        }
+
+        private void UpdateCurrentWbWithPreviousOne(int legNumber, Statuses statuses)
+        {
+            for(int i = 0; i < statuses.WallBoxLegs[legNumber].WallBoxStatuses.Count; i++)
+            {
+                statuses.WallBoxLegs[legNumber].WallBoxStatuses[i].WallBoxId = statuses.WallBoxLegs[legNumber - 1].WallBoxStatuses[i].WallBoxId;
+                statuses.WallBoxLegs[legNumber].WallBoxStatuses[i].CarId = statuses.WallBoxLegs[legNumber - 1].WallBoxStatuses[i].CarId;
+                statuses.WallBoxLegs[legNumber].WallBoxStatuses[i].IsConnected = statuses.WallBoxLegs[legNumber - 1].WallBoxStatuses[i].IsConnected;
+                statuses.WallBoxLegs[legNumber].WallBoxStatuses[i].NeededEnergy = statuses.WallBoxLegs[legNumber - 1].WallBoxStatuses[i].NeededEnergy;
+                statuses.WallBoxLegs[legNumber].WallBoxStatuses[i].CurrentChargeLoad = statuses.WallBoxLegs[legNumber - 1].WallBoxStatuses[i].CurrentChargeLoad;
             }
             
         }
@@ -301,13 +324,5 @@ namespace algorithm.Services.ChargeManagementService
 
             return DateTime.MinValue;
         }
-
-        //private Leg ConvertLegNumberToPackageTime(int legNumber)
-        //{
-        //    DateTime startTime = StartTime.AddMinutes(LegDuration * (legNumber - 1));
-        //    DateTime endTime = startTime.AddMinutes(LegDuration);
-
-        //    return new Leg(legNumber, startTime, endTime);
-        //}
     }
 }

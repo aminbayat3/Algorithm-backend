@@ -5,7 +5,7 @@
         public string NotificationToUser {  get; set; }
         public string CommandToWB { get; set; }
 
-        public Notification(string notificationToUser, string commandToWb) 
+        public Notification(string commandToWb, string notificationToUser)
         {
             NotificationToUser = notificationToUser;
             CommandToWB = commandToWb;

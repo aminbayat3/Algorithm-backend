@@ -58,6 +58,7 @@ namespace algorithm.Controllers
                 var notification = ChargeManagementService.legManager(statuses, legNumber);
 
                 // notification
+                Console.WriteLine("Leg NUmber : " + legNumber);
                 Console.WriteLine("CommandToWB: " + notification.CommandToWB + "     " + "NotificationToUser: " + notification.NotificationToUser);
               
 
