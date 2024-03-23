@@ -58,7 +58,7 @@ namespace algorithm.Services.ChargeManagementService
 
             connectedCarStatuses.RemoveAll(carStat => statuses.SocLegs[futureCounter - 1].SocStatuses.Any(socLeg => (socLeg.CarId == carStat.CarId) && socLeg.IsFull));
 
-            if(legNumber > 0) UpdateSocOfNextLegWithCurrentOne(legNumber, statuses);
+            if(legNumber > 0) UpdateSocOfCurrentOneWithLasOne(legNumber, statuses);
 
             // update the future in leg_status_wallboxes until all connected cars are full
             while (connectedCarStatuses.Count > 0)
@@ -125,25 +125,27 @@ namespace algorithm.Services.ChargeManagementService
             string notificationString = "";
             bool isNeedTimePrinted = false;
             bool isFullTimePrinted = false;
+            int fullLegNumber = 0;
             
              foreach(var carStat in connectedCarStatuses) { 
                 notificationString += ("CarId:  " + carStat.CarId);
 
                 foreach (var socLeg in statuses.SocLegs)
                 {
-                    var NeedSocStat = socLeg.SocStatuses.FirstOrDefault(socLegStat => (socLegStat.CarId == carStat.CarId) && socLegStat.IsNeedMet);
-                    var FullSocStat = socLeg.SocStatuses.FirstOrDefault(socLegStat => (socLegStat.CarId == carStat.CarId) && socLegStat.IsFull);
+                    var needSocStat = socLeg.SocStatuses.FirstOrDefault(socLegStat => (socLegStat.CarId == carStat.CarId) && socLegStat.IsNeedMet);
+                    var fullSocStat = socLeg.SocStatuses.FirstOrDefault(socLegStat => (socLegStat.CarId == carStat.CarId) && socLegStat.IsFull);
 
-                    if ((NeedSocStat != null) && !isNeedTimePrinted)
+                    if ((needSocStat != null) && !isNeedTimePrinted)
                     {
                         notificationString += "  NeedMetTime:  " + socLeg.StartTime;
                         isNeedTimePrinted = true;
                     }
 
-                    if ((FullSocStat != null) && !isFullTimePrinted)
+                    if ((fullSocStat != null) && !isFullTimePrinted)
                     {
                         notificationString += "  FullTime:  " + socLeg.StartTime;
                         isFullTimePrinted = true;
+                        fullLegNumber = socLeg.Number;
                     }
 
                     if (isFullTimePrinted && isNeedTimePrinted) break;
@@ -163,11 +165,18 @@ namespace algorithm.Services.ChargeManagementService
                     }
                 }
 
-                foreach(var socLeg in statuses.SocLegs[expoLegNum].SocStatuses)
+                for(int i = 0; i < statuses.SocLegs[expoLegNum].SocStatuses.Count; i++)
                 {
-                    if (socLeg.CarId == carStat.CarId)
+                    if (statuses.SocLegs[expoLegNum].SocStatuses[i].CarId == carStat.CarId)
                     {
-                        notificationString += " KWH in EXPO: " + socLeg.Soc;
+                        if(expoLegNum >= fullLegNumber)
+                        {
+                            notificationString += " KWH in EXPO: " + statuses.SocLegs[fullLegNumber].SocStatuses[i].Soc;
+                        } else
+                        {
+                            notificationString += " KWH in EXPO: " + statuses.SocLegs[expoLegNum].SocStatuses[i].Soc;
+                        }
+                        
                         break;
                     }
                 }
@@ -231,7 +240,7 @@ namespace algorithm.Services.ChargeManagementService
             }
         }
 
-        private void UpdateSocOfNextLegWithCurrentOne(int legNumber, Statuses statuses)
+        private void UpdateSocOfCurrentOneWithLasOne(int legNumber, Statuses statuses)
         {
             for(int i = 0; i < statuses.SocLegs[legNumber].SocStatuses.Count; i++)
             {

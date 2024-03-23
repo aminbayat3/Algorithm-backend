@@ -13,7 +13,7 @@ namespace algorithm.Utils
             var simulatePiAndPo = new List<FutureStatusOnWallBoxes>();
             var connectionLoadLegs = new List<AvailableConnectionLoad>();
 
-            int counter = 1;
+            int counter = 0;
 
             while (startTime < endTime)
             {
