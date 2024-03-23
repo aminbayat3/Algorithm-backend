@@ -123,11 +123,15 @@ namespace algorithm.Services.ChargeManagementService
         {
             var connectedCarStatuses = GetDataFromConnectedCars(statuses, legNumber);
             string notificationString = "";
-            bool isNeedTimePrinted = false;
-            bool isFullTimePrinted = false;
             int fullLegNumber = 0;
-            
-             foreach(var carStat in connectedCarStatuses) { 
+
+
+             foreach (var carStat in connectedCarStatuses) {
+
+                bool isNeedTimePrinted = false;
+                bool isFullTimePrinted = false;
+                fullLegNumber = 0;
+
                 notificationString += ("CarId:  " + carStat.CarId);
 
                 foreach (var socLeg in statuses.SocLegs)
@@ -150,13 +154,9 @@ namespace algorithm.Services.ChargeManagementService
 
                     if (isFullTimePrinted && isNeedTimePrinted) break;
                 }
-           
-            }
 
-            foreach(var carStat in connectedCarStatuses)
-            {
                 var expoLegNum = 0;
-                foreach(var reservation in ReservationDb.Reservations)
+                foreach (var reservation in ReservationDb.Reservations)
                 {
                     if (reservation.CarId == carStat.CarId)
                     {
@@ -165,23 +165,25 @@ namespace algorithm.Services.ChargeManagementService
                     }
                 }
 
-                for(int i = 0; i < statuses.SocLegs[expoLegNum].SocStatuses.Count; i++)
+                for (int i = 0; i < statuses.SocLegs[expoLegNum].SocStatuses.Count; i++)
                 {
                     if (statuses.SocLegs[expoLegNum].SocStatuses[i].CarId == carStat.CarId)
                     {
-                        if(expoLegNum >= fullLegNumber)
+                        if (expoLegNum >= fullLegNumber)
                         {
-                            notificationString += " KWH in EXPO: " + statuses.SocLegs[fullLegNumber].SocStatuses[i].Soc;
-                        } else
-                        {
-                            notificationString += " KWH in EXPO: " + statuses.SocLegs[expoLegNum].SocStatuses[i].Soc;
+                            notificationString += "|| KWH in EXPO For " + carStat.CarId + " is " + statuses.SocLegs[fullLegNumber].SocStatuses[i].Soc +  " ";
                         }
-                        
+                        else
+                        {
+                            notificationString += "|| KWH in EXPO For " + carStat.CarId + " is " + statuses.SocLegs[expoLegNum].SocStatuses[i].Soc + " ";
+                        }
+
                         break;
                     }
                 }
 
             }
+
 
             return notificationString;
         }
