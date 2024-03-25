@@ -58,8 +58,7 @@ namespace algorithm.Controllers
                 var notification = ChargeManagementService.legManager(statuses, legNumber);
 
                 // notification
-                Console.WriteLine("Leg NUmber : " + legNumber);
-                Console.WriteLine("CommandToWB: " + notification.CommandToWB + "     " + "NotificationToUser: " + notification.NotificationToUser);
+                Console.WriteLine("Leg NUm : " + legNumber + " CToWB: " + notification.CommandToWB + "     " + "NotToUser: " + notification.NotificationToUser);
               
 
                 // normal sleeping time is the package length
@@ -72,7 +71,7 @@ namespace algorithm.Controllers
             var counter2 = 1;
             foreach (var SocStatus in statuses.SocLegs)
             {
-                Console.WriteLine("LegNumber: " + counter2 + " StartTime: " + SocStatus.StartTime + " EndTime: " + SocStatus.EndTime);
+                Console.WriteLine("LegNum: " + counter2 + " STime: " + SocStatus.StartTime + " ETime: " + SocStatus.EndTime);
                 Console.WriteLine(SocStatus.ToString());
                 counter2++;
             }

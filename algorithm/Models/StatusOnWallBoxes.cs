@@ -21,7 +21,7 @@ namespace algorithm.Models
 
         public override string ToString()
         {
-            string result = "FutureWallBoxStatuses: \n";
+            string result = "FutureStats:";
             foreach (WallBoxStatus status in WallBoxStatuses)
             {
                 result += status.ToString() + "\n";

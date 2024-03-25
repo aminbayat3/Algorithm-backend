@@ -132,7 +132,7 @@ namespace algorithm.Services.ChargeManagementService
                 bool isFullTimePrinted = false;
                 fullLegNumber = 0;
 
-                notificationString += ("CarId:  " + carStat.CarId);
+                notificationString += ("CId:  " + carStat.CarId);
 
                 foreach (var socLeg in statuses.SocLegs)
                 {
@@ -141,13 +141,13 @@ namespace algorithm.Services.ChargeManagementService
 
                     if ((needSocStat != null) && !isNeedTimePrinted)
                     {
-                        notificationString += "  NeedMetTime:  " + socLeg.StartTime;
+                        notificationString += "  NTime:  " + socLeg.StartTime;
                         isNeedTimePrinted = true;
                     }
 
                     if ((fullSocStat != null) && !isFullTimePrinted)
                     {
-                        notificationString += "  FullTime:  " + socLeg.StartTime;
+                        notificationString += "  FTime:  " + socLeg.StartTime;
                         isFullTimePrinted = true;
                         fullLegNumber = socLeg.Number;
                     }
@@ -171,11 +171,11 @@ namespace algorithm.Services.ChargeManagementService
                     {
                         if (expoLegNum >= fullLegNumber)
                         {
-                            notificationString += "|| KWH in EXPO For " + carStat.CarId + " is " + statuses.SocLegs[fullLegNumber].SocStatuses[i].Soc +  " ";
+                            notificationString += "|| KWH in EXPO " + statuses.SocLegs[fullLegNumber].SocStatuses[i].Soc +  " ";
                         }
                         else
                         {
-                            notificationString += "|| KWH in EXPO For " + carStat.CarId + " is " + statuses.SocLegs[expoLegNum].SocStatuses[i].Soc + " ";
+                            notificationString += "|| KWH in EXPO " + statuses.SocLegs[expoLegNum].SocStatuses[i].Soc + " ";
                         }
 
                         break;

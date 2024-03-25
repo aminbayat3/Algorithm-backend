@@ -19,12 +19,12 @@
 
         public override string ToString()
         {
-            return $"CarId: {CarId}, WallBoxId: {WallBoxId}, IsConnected: {IsConnected}, NeededEnergy: {NeededEnergy}";
+            return $"CId: {CarId}, WBId: {WallBoxId}, IsCon?: {IsConnected}, Need: {NeededEnergy}";
         }
 
         public string CommandWB()
         {
-            return $"WallBoxId: {WallBoxId},  CurrentChargeLoad: {CurrentChargeLoad}";
+            return $"WBId: {WallBoxId},  CL: {CurrentChargeLoad}";
         }
     }
 }

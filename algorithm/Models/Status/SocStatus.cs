@@ -20,7 +20,7 @@ namespace algorithm.Models.Status
 
         public override string ToString()
         {
-            return $"CarId: {CarId}, Soc: {Soc}, IsFull: {IsFull}, IsNeedMet: {IsNeedMet}";
+            return $"CId: {CarId}, Soc: {Soc}, IsF?: {IsFull}, IsN?: {IsNeedMet}";
         }
     }
 }

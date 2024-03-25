@@ -19,7 +19,7 @@ namespace algorithm.Models
 
         public override string ToString()
         {
-            string result = "StatusOfSocInCars: \n";
+            string result = "SocStat: ";
             foreach (SocStatus status in SocStatuses)
             {
                 result += status.ToString() + "\n";
