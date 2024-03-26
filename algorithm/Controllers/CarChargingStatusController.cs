@@ -23,20 +23,19 @@ namespace algorithm.Controllers
         [HttpPost]
         public void GetCarChargingStatus([FromBody] InfrastructureDTO form)
         {
-            // KLAUs
-            //ReservationDb.AddReservations(form.Reservations);
-
+            // these should be removed later
             var infrastructure = new Infrastructure()
             {
                 StartTime = form.StartTime,
                 EndTime = form.EndTime,
                 LegDuration = form.LegDuration,
-                ConnectionLoad = form.ConnectionLoad,
+                ConnectionLoads = form.ConnectionLoads,
                 Wallboxes = form.Wallboxes,
                 Cars = form.Cars,
             };
 
             InfrastructureDb.AddConfiguration(infrastructure);
+            // till here should be removed , because we already set up the infrastructure
 
             Statuses statuses = LegGenerator.GenerateLegs(form.StartTime, form.EndTime, form.LegDuration);
 
@@ -63,6 +62,8 @@ namespace algorithm.Controllers
                 }
 
             }
+
+            //injection to connnection Load Legs
 
             for (int legNumber = 0; legNumber < statuses.SocLegs.Count; legNumber++)
             {

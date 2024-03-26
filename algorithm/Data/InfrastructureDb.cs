@@ -9,7 +9,7 @@ namespace algorithm.Data
         public static DateTime StartTime { get; set; }
         public static DateTime EndTime { get; set; }
         public static double LegDuration { get; set; } = 15; // Minutes
-        public static double ConnectionLoad { get; set; }
+        public static List<ConnectionLoad> ConnectionLoads { get; set; } = new List<ConnectionLoad>();
         public static List<WallBox> WallBoxes { get; set; } = new List<WallBox>() {
             //new WallBox { Id = "WB1", Name="WB 1" AcLimit = 11, IsActive = true },
             //new WallBox { Id = "WB2", Name="WB 2", AcLimit = 11, IsActive = true },   
@@ -28,7 +28,7 @@ namespace algorithm.Data
             StartTime = infrastructure.StartTime;
             EndTime = infrastructure.EndTime;
             LegDuration = infrastructure.LegDuration;
-            ConnectionLoad = infrastructure.ConnectionLoad;
+            ConnectionLoads = infrastructure.ConnectionLoads;
             WallBoxes = infrastructure.Wallboxes;
             Cars = infrastructure.Cars;
         }

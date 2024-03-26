@@ -13,7 +13,7 @@ namespace algorithm.Services.ChargeManagementService
 {
     public class ChargeManagementService
     {
-        public Notification legManager(Statuses statuses, int legNumber) // it should check if we have any plugin before this 
+        public Notification legManager(Statuses statuses, int legNumber) 
         {
             // first update the wallbox status
             readDataAndUpdateWallboxesStatuses(statuses, legNumber);
@@ -29,7 +29,6 @@ namespace algorithm.Services.ChargeManagementService
 
         private void readDataAndUpdateWallboxesStatuses(Statuses statuses, int legNumber)
         { 
-           // **** Should we onlyy update one leg with the sim ??? because when we go to the future then we dont have any information??
 
             for (int i = 0; i < statuses.WallBoxLegs[legNumber].WallBoxStatuses.Count; i++)
             {

@@ -19,7 +19,7 @@ namespace algorithm.Controllers
                 StartTime = InfrastructureDb.StartTime,
                 EndTime = InfrastructureDb.EndTime,
                 LegDuration = InfrastructureDb.LegDuration,
-                ConnectionLoad = InfrastructureDb.ConnectionLoad,
+                ConnectionLoads = InfrastructureDb.ConnectionLoads,
                 Wallboxes = InfrastructureDb.WallBoxes,
                 Cars = InfrastructureDb.Cars,
             };
@@ -35,7 +35,7 @@ namespace algorithm.Controllers
                 StartTime = form.StartTime,
                 EndTime = form.EndTime,
                 LegDuration = form.LegDuration,
-                ConnectionLoad = form.ConnectionLoad,
+                ConnectionLoads = form.ConnectionLoads,
                 Wallboxes = form.Wallboxes,
                 Cars = form.Cars,
             };
@@ -53,7 +53,7 @@ namespace algorithm.Controllers
                 StartTime = form.StartTime,
                 EndTime = form.EndTime,
                 LegDuration = form.LegDuration,
-                ConnectionLoad = form.ConnectionLoad,
+                ConnectionLoads = form.ConnectionLoads,
                 Wallboxes = form.Wallboxes,
                 Cars = form.Cars,
             };

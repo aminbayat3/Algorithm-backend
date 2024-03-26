@@ -7,7 +7,7 @@ namespace algorithm.Models.DTO
         public DateTime StartTime { get; set; }
         public DateTime EndTime { get; set; }
         public double LegDuration { get; set; } = 15; // Minutes
-        public double ConnectionLoad { get; set; }
+        public List<ConnectionLoad> ConnectionLoads { get; set; }
         public List<WallBox> Wallboxes { get; set; }
         public List<Car> Cars { get; set; }
 
@@ -18,7 +18,7 @@ namespace algorithm.Models.DTO
             StartTime = infrastructure.StartTime;
             EndTime = infrastructure.EndTime;
             LegDuration = infrastructure.LegDuration;
-            ConnectionLoad = infrastructure.ConnectionLoad;
+            ConnectionLoads = infrastructure.ConnectionLoads;
             Wallboxes = infrastructure.Wallboxes;
             Cars = infrastructure.Cars;
         }
