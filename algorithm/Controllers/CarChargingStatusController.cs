@@ -23,6 +23,7 @@ namespace algorithm.Controllers
         [HttpPost]
         public void GetCarChargingStatus([FromBody] InfrastructureDTO form)
         {
+            //KLaus
             // these should be removed later
             var infrastructure = new Infrastructure()
             {
