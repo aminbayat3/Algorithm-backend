@@ -77,7 +77,7 @@ namespace algorithm.Services.ChargeManagementService
                 foreach(var normalCarStat in  normalCarStatuses)
                 {
                     var targetWbStat = getWBStatusByCarId(statuses, futureCounter, normalCarStat.CarId);
-                    targetWbStat.CurrentChargeLoad = Math.Min((Globals.Form.ConnectionLoad / normalCarStatuses.Count), getAcLimitByCarId(normalCarStat.CarId));
+                    targetWbStat.CurrentChargeLoad = Math.Min((InfrastructureDb.ConnectionLoad / normalCarStatuses.Count), getAcLimitByCarId(normalCarStat.CarId));
                     totalChargeLoadForNormalCars += targetWbStat.CurrentChargeLoad;
                 }
 
@@ -90,7 +90,7 @@ namespace algorithm.Services.ChargeManagementService
                 foreach(var needMetCarStat in needMetCars)
                 {
                     var targetWbStat = getWBStatusByCarId(statuses, futureCounter, needMetCarStat.CarId);
-                    targetWbStat.CurrentChargeLoad = Math.Min(((Globals.Form.ConnectionLoad - totalChargeLoadForNormalCars) / needMetCars.Count), getAcLimitByCarId(needMetCarStat.CarId));
+                    targetWbStat.CurrentChargeLoad = Math.Min(((InfrastructureDb.ConnectionLoad - totalChargeLoadForNormalCars) / needMetCars.Count), getAcLimitByCarId(needMetCarStat.CarId));
                 }
 
 
@@ -288,14 +288,14 @@ namespace algorithm.Services.ChargeManagementService
         {
             var targetWbStatuses = getWBStatusByCarId(statuses, legNumber, carId);
 
-            var chargeLoadInOneLeg = targetWbStatuses.CurrentChargeLoad * (Globals.Form.LegDuration / 60);
+            var chargeLoadInOneLeg = targetWbStatuses.CurrentChargeLoad * (InfrastructureDb.LegDuration / 60);
 
             return chargeLoadInOneLeg;
         }
 
         private double getTanksizeByCarId(string carId)
         {
-            foreach(var car in CarDb.Cars)
+            foreach(var car in InfrastructureDb.Cars)
             {
                 if (car.Id.Equals(carId)) return car.TankSize;
             }
@@ -305,7 +305,7 @@ namespace algorithm.Services.ChargeManagementService
 
         private double getAcLimitByCarId(string carId)
         {
-            foreach (var car in CarDb.Cars)
+            foreach (var car in InfrastructureDb.Cars)
             {
                 if (car.Id.Equals(carId))
                 {

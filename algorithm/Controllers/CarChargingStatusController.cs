@@ -20,12 +20,22 @@ namespace algorithm.Controllers
             ChargeManagementService = chargeManagementService;
         }
 
-        [HttpGet]
-        public void GetCarChargingStatus([FromQuery] CarChargingSessionDTO form)
+        [HttpPost]
+        public void GetCarChargingStatus([FromBody] InfrastructureDTO form)
         {
             //ReservationDb.AddReservations(form.Reservations);
 
-            Globals.Form = form;
+            var infrastructure = new Infrastructure()
+            {
+                StartTime = form.StartTime,
+                EndTime = form.EndTime,
+                LegDuration = form.LegDuration,
+                ConnectionLoad = form.ConnectionLoad,
+                Wallboxes = form.Wallboxes,
+                Cars = form.Cars,
+            };
+
+            InfrastructureDb.AddConfiguration(infrastructure);
 
             Statuses statuses = LegGenerator.GenerateLegs(form.StartTime, form.EndTime, form.LegDuration);
 

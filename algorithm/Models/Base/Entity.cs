@@ -7,10 +7,5 @@ namespace algorithm.Models.Base
         [Key]
         public string Id { get; set; }
 
-        [Required]
-        public DateTime? CreatedAt { get; set; }
-
-        [Required]
-        public DateTime? UpdatedAt { get; set; }
     }
 }

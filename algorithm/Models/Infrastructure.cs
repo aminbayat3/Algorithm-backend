@@ -2,10 +2,12 @@
 {
     public class Infrastructure
     {
+        public DateTime StartTime { get; set; }
+        public DateTime EndTime { get; set; }
+        public double LegDuration { get; set; } = 15; // Minutes
         public double ConnectionLoad { get; set; }
         public List<WallBox> Wallboxes { get; set; }
-        //public List<Guid> PermittedCarIds { get; set; } // let's ignore this for now
-        public List<StatusOfSocInCars> SocLegs { get; set; }
-        public List<StatusOnWallBoxes> WallBoxLegs { get; set; }
+        public List<Car> Cars { get; set; } 
+
     }
 }

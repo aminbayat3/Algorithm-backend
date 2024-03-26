@@ -6,14 +6,14 @@ namespace algorithm.Utils
     {
          public static int ConvertTimeToLegNumber(DateTime time)
         {
-            TimeSpan duration = time - Globals.Form.StartTime;
+            TimeSpan duration = time - InfrastructureDb.StartTime;
 
             //Calculate the total number of minutes in a TimeSpan
             double totalMinutes = duration.TotalMinutes;
 
             // Divide by 15 to find how many 15-minute intervals are contained in the duration
 
-            return (int)Math.Floor(totalMinutes / Globals.Form.LegDuration);
+            return (int)Math.Floor(totalMinutes / InfrastructureDb.LegDuration);
         }
 
         public static int GetNumericPart(string input)

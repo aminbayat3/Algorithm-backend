@@ -13,7 +13,7 @@ namespace algorithm.Models
         {
             WallBoxStatuses = new List<WallBoxStatus>();
 
-            foreach (var wallbox in WallBoxDb.WallBoxes)
+            foreach (var wallbox in InfrastructureDb.WallBoxes)
             {
                 WallBoxStatuses.Add(new WallBoxStatus(wallbox.Id));
             }

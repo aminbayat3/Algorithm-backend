@@ -11,7 +11,7 @@ namespace algorithm.Models
         {
             SocStatuses = new List<SocStatus>();
 
-            foreach (var car in CarDb.Cars)
+            foreach (var car in InfrastructureDb.Cars)
             {
                 SocStatuses.Add(new SocStatus(car.Id));
             }

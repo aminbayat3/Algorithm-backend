@@ -12,5 +12,6 @@
                 Wallboxes.Add(new WallboxDTO() { Id = wallbox.Id, Name = wallbox.Id, AcLimit = wallbox.AcLimit });
             });
         }
+        
     }
 }
