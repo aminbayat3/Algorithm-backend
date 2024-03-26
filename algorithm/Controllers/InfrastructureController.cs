@@ -27,7 +27,7 @@ namespace algorithm.Controllers
             return infrastructure;
         }
 
-        [HttpPost]
+        [HttpPost] //csv
         public InfrastructureDTO AddInfrastructureData([FromBody] InfrastructureDTO form)
         {
             var infrastructure = new Infrastructure()

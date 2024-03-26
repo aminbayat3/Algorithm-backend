@@ -23,6 +23,7 @@ namespace algorithm.Controllers
         [HttpPost]
         public void GetCarChargingStatus([FromBody] InfrastructureDTO form)
         {
+            // KLAUs
             //ReservationDb.AddReservations(form.Reservations);
 
             var infrastructure = new Infrastructure()
