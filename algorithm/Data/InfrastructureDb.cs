@@ -1,5 +1,6 @@
 ﻿using algorithm.Models;
 using algorithm.Models.DTO;
+using algorithm.Utils;
 using System.Runtime.CompilerServices;
 
 namespace algorithm.Data
@@ -23,6 +24,8 @@ namespace algorithm.Data
             //new Car { Id = "Car4", Name = "Car 4", TankSize = 20, MaxAcConnectionLoad = 12},
         };
 
+        public static Statuses Statuses { get; set; }
+
         public static void AddConfiguration(Infrastructure infrastructure)
         {
             StartTime = infrastructure.StartTime;
@@ -31,6 +34,7 @@ namespace algorithm.Data
             ConnectionLoads = infrastructure.ConnectionLoads;
             WallBoxes = infrastructure.Wallboxes;
             Cars = infrastructure.Cars;
+            Statuses = infrastructure.Statuses;
         }
     }
 }

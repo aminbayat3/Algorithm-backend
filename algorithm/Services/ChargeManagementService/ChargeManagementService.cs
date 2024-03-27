@@ -76,7 +76,7 @@ namespace algorithm.Services.ChargeManagementService
                 foreach(var normalCarStat in  normalCarStatuses)
                 {
                     var targetWbStat = getWBStatusByCarId(statuses, futureCounter, normalCarStat.CarId);
-                    targetWbStat.CurrentChargeLoad = Math.Min((InfrastructureDb.ConnectionLoad / normalCarStatuses.Count), getAcLimitByCarId(normalCarStat.CarId));
+                    targetWbStat.CurrentChargeLoad = Math.Min((statuses.ConnectionLoadLegs[legNumber].ConnectionLoad / normalCarStatuses.Count), getAcLimitByCarId(normalCarStat.CarId));
                     totalChargeLoadForNormalCars += targetWbStat.CurrentChargeLoad;
                 }
 
@@ -89,7 +89,7 @@ namespace algorithm.Services.ChargeManagementService
                 foreach(var needMetCarStat in needMetCars)
                 {
                     var targetWbStat = getWBStatusByCarId(statuses, futureCounter, needMetCarStat.CarId);
-                    targetWbStat.CurrentChargeLoad = Math.Min(((InfrastructureDb.ConnectionLoad - totalChargeLoadForNormalCars) / needMetCars.Count), getAcLimitByCarId(needMetCarStat.CarId));
+                    targetWbStat.CurrentChargeLoad = Math.Min(((statuses.ConnectionLoadLegs[legNumber].ConnectionLoad - totalChargeLoadForNormalCars) / needMetCars.Count), getAcLimitByCarId(needMetCarStat.CarId));
                 }
 
 

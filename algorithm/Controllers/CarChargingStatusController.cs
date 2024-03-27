@@ -38,7 +38,7 @@ namespace algorithm.Controllers
             InfrastructureDb.AddConfiguration(infrastructure);
             // till here should be removed , because we already set up the infrastructure
 
-            Statuses statuses = LegGenerator.GenerateLegs(form.StartTime, form.EndTime, form.LegDuration);
+            Statuses statuses = InfrastructureDb.Statuses;
 
             // we have to inject the simulation layer based on the reservations in the form(pI and Po and Needed Energy)
             foreach (Reservation reservation in ReservationDb.Reservations)

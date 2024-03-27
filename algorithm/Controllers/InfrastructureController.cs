@@ -2,6 +2,7 @@
 using algorithm.Models;
 using algorithm.Models.DTO;
 using algorithm.Models.DTO.Wallbox;
+using algorithm.Utils;
 using Microsoft.AspNetCore.Mvc;
 
 namespace algorithm.Controllers
@@ -38,7 +39,8 @@ namespace algorithm.Controllers
                 ConnectionLoads = form.ConnectionLoads,
                 Wallboxes = form.Wallboxes,
                 Cars = form.Cars,
-            };
+                Statuses = LegGenerator.GenerateLegs(form.StartTime, form.EndTime, form.LegDuration)
+        };
 
             InfrastructureDb.AddConfiguration(infrastructure);
 
@@ -56,11 +58,24 @@ namespace algorithm.Controllers
                 ConnectionLoads = form.ConnectionLoads,
                 Wallboxes = form.Wallboxes,
                 Cars = form.Cars,
+                Statuses = LegGenerator.GenerateLegs(form.StartTime, form.EndTime, form.LegDuration)
             };
 
             InfrastructureDb.AddConfiguration(infrastructure);
 
+            UpdateConnectionLoadLegs(InfrastructureDb.Statuses, form.ConnectionLoads);
+
             return new InfrastructureDTO(infrastructure);
+        }
+
+        private void UpdateConnectionLoadLegs(Statuses statuses, List<ConnectionLoad> connectionLoads)
+        {
+            foreach (var connectionLoad in connectionLoads)
+            {
+                int legNumber = Helper.ConvertTimeToLegNumber(connectionLoad.Time);
+                if(legNumber < statuses.SocLegs.Count) statuses.ConnectionLoadLegs[legNumber].ConnectionLoad = connectionLoad.Value;
+            }
+            
         }
     }
 }

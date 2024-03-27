@@ -7,7 +7,8 @@
         public double LegDuration { get; set; } = 15; // Minutes
         public List<ConnectionLoad> ConnectionLoads { get; set; }
         public List<WallBox> Wallboxes { get; set; }
-        public List<Car> Cars { get; set; } 
+        public List<Car> Cars { get; set; }
+        public Statuses Statuses { get; set; }
 
     }
 }
